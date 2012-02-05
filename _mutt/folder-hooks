@@ -1,0 +1,56 @@
+# Null out any folder specific keys.
+folder-hook . bind index @ noop
+
+# Set default signature
+folder-hook . set signature=~/.signature
+
+# Start off with index footer in pager.
+folder-hook . set pager_index_lines=6
+
+# Reset any headers that may have been set in other folder-hooks
+folder-hook . unmy_hdr From:
+folder-hook . unmy_hdr Reply-To:
+folder-hook . unmy_hdr Fcc:
+folder-hook . unmy_hdr Return-Receipt-To:
+folder-hook . unmy_hdr Organization:
+folder-hook . unmy_hdr X-URL:
+
+folder-hook . my_hdr X-Operating-System: Linux/`uname -r` (`uname -m`)
+
+
+
+# This is the index format for non-list folders.
+#folder-hook . set index_format   = "%4C %Z %{%b %d} %-15.15F (%4l) %s"
+
+# Sort by date-sent
+folder-hook . set sort=reverse-date-sent
+
+# By default use the default value for abort_nosubject
+folder-hook . reset abort_nosubject
+
+# Always verify signatures by default.
+# folder-hook . set pgp_verify_sig
+
+# Set From depending on the folder
+folder-hook . my_hdr From: Kingshuk Dasgupta <kingshuk.dasgpupta@gmail.com>
+folder-hook .  'set smtp_url=smtp://kingshuk.dasgupta@smtp.gmail.com:587/'
+
+#folder-hook =Yahoo my_hdr From: Kingshuk Dasgupta <kdasgupta@yahoo.com>
+
+folder-hook =Hotmail my_hdr From: Kingshuk Dasgupta <dasguptak@hotmail.com>
+
+folder-hook =rextrebat my_hdr From: Kingshuk Dasgupta <rextrebat@gmail.com>
+folder-hook =records/* my_hdr From: Kingshuk Dasgupta <rextrebat@gmail.com>
+folder-hook =rextrebat  'set smtp_url=smtp://rextrebat@smtp.gmail.com:587/'
+
+# Hooks for lists
+
+folder-hook =lists/edmundian	source ~/.mutt/folder-hooks-lists
+folder-hook =lists/myshillong	source ~/.mutt/folder-hooks-lists
+folder-hook =lists/Poems	source ~/.mutt/folder-hooks-lists
+folder-hook =lists/Texbirds	source ~/.mutt/folder-hooks-lists
+folder-hook =lists/WineAdvisor	source ~/.mutt/folder-hooks-lists
+folder-hook =lists/quiznet	source ~/.mutt/folder-hooks-lists
+folder-hook =lists/nathist	source ~/.mutt/folder-hooks-lists
+folder-hook =lists/PlanoTXFC	source ~/.mutt/folder-hooks-lists
+
