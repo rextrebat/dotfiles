@@ -49,3 +49,6 @@
 [submodule "_vim/bundle/tasklist"]
 	path = _vim/bundle/tasklist
 	url = https://github.com/vim-scripts/TaskList.vim.git
+[submodule "_vim/bundle/matchit"]
+	path = _vim/bundle/matchit
+	url = https://github.com/edsono/vim-matchit.git
