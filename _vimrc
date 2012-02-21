@@ -48,6 +48,9 @@
 " MakeGreen
 "    Generic test runner that works with nose
 "
+" Matchit
+"    Allows % to be used to match tags
+"
 " ==========================================================
 " Shortcuts
 " ==========================================================
