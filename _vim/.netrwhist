@@ -1,3 +1,8 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =1
-let g:netrw_dirhist_1='/home/kdasgupta/.xmonad'
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/home/kdasgupta/workspace'
+let g:netrw_dirhist_2='/home/kdasgupta/workspace/lingofon'
+let g:netrw_dirhist_3='/home/kdasgupta/workspace/lingofon/lfcallmgr'
+let g:netrw_dirhist_4='/home/kdasgupta/.mutt'
+let g:netrw_dirhist_5='/home/kdasgupta/workspace/puzzles'
+let g:netrw_dirhist_6='/home/kdasgupta/.dotfiles'

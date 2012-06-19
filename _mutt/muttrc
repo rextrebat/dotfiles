@@ -1,8 +1,8 @@
 # .muttrc file - kdasgupta
 
 #set hostname=localhost                    # Name of our local host.
-set spoolfile=imaps://kdasgupta@stapledon/
-set folder=imaps://kdasgupta@stapledon/
+set spoolfile=imaps://kdasgupta@chiel/
+set folder=imaps://kdasgupta@chiel/
 set hidden_host                           # Hide host details.
 set alias_file=~/.mutt/aliases            # Keep aliases in this file.
 set postpone=ask-no                       # Ask about postponing.
