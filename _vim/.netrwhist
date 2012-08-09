@@ -1,8 +1,11 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_cnt =9
 let g:netrw_dirhist_1='/home/kdasgupta/workspace'
-let g:netrw_dirhist_2='/home/kdasgupta/workspace/lingofon'
-let g:netrw_dirhist_3='/home/kdasgupta/workspace/lingofon/lfcallmgr'
-let g:netrw_dirhist_4='/home/kdasgupta/.mutt'
-let g:netrw_dirhist_5='/home/kdasgupta/workspace/puzzles'
-let g:netrw_dirhist_6='/home/kdasgupta/.dotfiles'
+let g:netrw_dirhist_2='/home/kdasgupta/workspace/accures/modules/placement/scraper'
+let g:netrw_dirhist_3='/home/kdasgupta/workspace/accures/modules/placement'
+let g:netrw_dirhist_4='/home/kdasgupta/workspace/accures/modules'
+let g:netrw_dirhist_5='/home/kdasgupta/workspace/accures'
+let g:netrw_dirhist_6='/home/kdasgupta/workspace/accures/try'
+let g:netrw_dirhist_7='/home/kdasgupta/.dotfiles/.git'
+let g:netrw_dirhist_8='/home/kdasgupta/.dotfiles/_vim/bundle/evervim/plugin/py/lib/thrift'
+let g:netrw_dirhist_9='/home/kdasgupta/clones/zabbix/zabbix-1.8.15rc1/src/zabbix_server/nodewatcher'
