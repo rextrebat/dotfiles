@@ -175,3 +175,7 @@ export GIT_EDITOR="$vim"
 export PS1="$PS1\$(parse_git_branch)\$(parse_svn_branch) "
 # Export GPG key
 export GPGKEY=53F9969E
+# Large history file and append from all terminals
+export HISTSIZE=1000000
+export HISTFILESIZE=1000000
+shopt -s histappend
