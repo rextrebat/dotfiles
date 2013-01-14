@@ -55,6 +55,3 @@
 [submodule "_vim/bundle/evervim"]
 	path = _vim/bundle/evervim
 	url = https://github.com/kakkyz81/evervim.git
-[submodule "_vim/bundle/powerline"]
-	path = _vim/bundle/powerline
-	url = https://github.com/Lokaltog/vim-powerline.git
