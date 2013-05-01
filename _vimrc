@@ -244,7 +244,7 @@ if has("gui_running")
     " Remove toolbar
     set guioptions-=T
 else
-    colorscheme molokai
+    colorscheme solarized
 endif
 
 " Paste from clipboard
