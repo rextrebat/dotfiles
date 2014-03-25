@@ -60,8 +60,8 @@ manageHook' = composeAll [ className =? "MPlayer"           --> doFloat
                          , className =? "Gimp"              --> doFloat
                          , className =? "Vlc"               --> doFloat
                          , className =? "emulator64-arm"    --> doShift "6-mob"
-                         , className =? "Firefox"           --> doShift "2-web"
-                         , isFullscreen --> (doF W.focusDown <+> doFullFloat) ]
+                         , className =? "Firefox"           --> doShift "2-web" ]
+--                         , isFullscreen --> (doF W.focusDown <+> doFullFloat) ]
 
 
 -------------------------------------------------------------------------------
