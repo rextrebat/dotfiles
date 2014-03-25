@@ -55,15 +55,13 @@ myConfig = defaultConfig { workspaces = workspaces'
 
 -------------------------------------------------------------------------------
 -- Window Management --
-manageHook' = composeAll [ isFullscreen             --> doFullFloat
-                         , className =? "MPlayer"   --> doFloat
-                         , className =? "mplayer2"  --> doFloat
-                         , className =? "Gimp"      --> doFloat
-                         , className =? "Vlc"       --> doFloat
-                         , className =? "emulator64-arm"       --> doFloat
-			 , insertPosition Below Newer
-			 , transience'
-                         ]
+manageHook' = composeAll [ className =? "MPlayer"           --> doFloat
+                         , className =? "mplayer2"          --> doFloat
+                         , className =? "Gimp"              --> doFloat
+                         , className =? "Vlc"               --> doFloat
+                         , className =? "emulator64-arm"    --> doFloat
+                         , className =? "firefox"           --> doShift "2-web"
+                         , isFullscreen --> (doF W.focusDown <+> doFullFloat) ]
 
 
 -------------------------------------------------------------------------------
