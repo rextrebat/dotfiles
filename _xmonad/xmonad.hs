@@ -60,6 +60,7 @@ manageHook' = composeAll [ isFullscreen             --> doFullFloat
                          , className =? "mplayer2"  --> doFloat
                          , className =? "Gimp"      --> doFloat
                          , className =? "Vlc"       --> doFloat
+                         , className =? "emulator64-arm"       --> doFloat
 			 , insertPosition Below Newer
 			 , transience'
                          ]
