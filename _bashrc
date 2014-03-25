@@ -179,3 +179,18 @@ export GPGKEY=53F9969E
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000
 shopt -s histappend
+
+# specific exports for /opt/software/
+#
+# Titanium Studio
+if [ -d "/opt/software/Titanium_Studio" ]; then
+    export MOZILLA_FIVE_HOME=/usr/lib/mozilla
+    export UBUNTU_MENUPROXY=0
+    export PATH=$PATH:/opt/software/Titanium_Studio/
+fi
+
+# Android - adt
+if [ -d "/opt/software/adt" ]; then
+
+fi
+# end specific exports for /opt/software/
