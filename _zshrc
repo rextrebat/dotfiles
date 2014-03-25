@@ -57,6 +57,7 @@ fi
 
 # Android - adt
 if [ -d "/opt/software/adt" ]; then
-
+    export PATH=$PATH:/opt/software/adt/sdk/tools/
+    export PATH=$PATH:/opt/software/adt/sdk/platform-tools/
 fi
 # end specific exports for /opt/software/
