@@ -59,7 +59,7 @@ manageHook' = composeAll [ className =? "MPlayer"           --> doFloat
                          , className =? "mplayer2"          --> doFloat
                          , className =? "Gimp"              --> doFloat
                          , className =? "Vlc"               --> doFloat
-                         , className =? "emulator64-arm"    --> doFloat
+                         , className =? "emulator64-arm"    --> doShift "6-mob"
                          , className =? "Firefox"           --> doShift "2-web"
                          , isFullscreen --> (doF W.focusDown <+> doFullFloat) ]
 
@@ -95,7 +95,7 @@ tabTheme1 = defaultTheme { decoHeight = 16
                          }
 
 -- workspaces
-workspaces' = ["1-main", "2-web", "3-mail", "4-torrents", "5-im", "6", "7", "8", "9"]
+workspaces' = ["1-main", "2-web", "3-mail", "4-torrents", "5-im", "6-mob", "7", "8", "9"]
 
 -- layouts
 layoutHook' = tile ||| mtile ||| tab ||| full
