@@ -194,3 +194,5 @@ if [ -d "/opt/software/adt" ]; then
 
 fi
 # end specific exports for /opt/software/
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
