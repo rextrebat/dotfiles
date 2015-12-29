@@ -61,3 +61,6 @@ if [ -d "/opt/software/adt" ]; then
     export PATH=$PATH:/opt/software/adt/sdk/platform-tools
 fi
 # end specific exports for /opt/software/
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" ]]
