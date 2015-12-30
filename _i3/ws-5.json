@@ -1,0 +1,33 @@
+// vim:ts=4:sw=4:et
+{
+    // splith split container with 1 children
+    "border": "normal",
+    "floating": "auto_off",
+    "layout": "splith",
+    "percent": 1,
+    "type": "con",
+    "nodes": [
+        {
+            "border": "normal",
+            "floating": "auto_off",
+            "geometry": {
+               "height": 900,
+               "width": 1600,
+               "x": 0,
+               "y": 18
+            },
+            "name": "Inbox (1958 unread, 14013 total) - Evolution",
+            "percent": 1,
+            "swallows": [
+               {
+               // "class": "^Evolution$",
+               // "instance": "^evolution$",
+               // "title": "^Inbox\\ \\(1958\\ unread\\,\\ 14013\\ total\\)\\ \\-\\ Evolution$",
+               // "window_role": "^EShellWindow\\-140694222136000$"
+               }
+            ],
+            "type": "con"
+        }
+    ]
+}
+

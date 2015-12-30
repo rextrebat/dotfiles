@@ -1,0 +1,44 @@
+// vim:ts=4:sw=4:et
+{
+    "border": "normal",
+    "floating": "auto_off",
+    "geometry": {
+       "height": 848,
+       "width": 1549,
+       "x": 51,
+       "y": 924
+    },
+    "name": "Gabriel Preda - Skype™",
+    "percent": 0.8,
+    "swallows": [
+       {
+       // "class": "^Skype$",
+       // "instance": "^skype$",
+       // "title": "^Gabriel\\ Preda\\ \\-\\ Skype™$",
+       // "window_role": "^ConversationsWindow$"
+       }
+    ],
+    "type": "con"
+}
+
+{
+    "border": "normal",
+    "floating": "auto_off",
+    "geometry": {
+       "height": 861,
+       "width": 316,
+       "x": 0,
+       "y": 0
+    },
+    "name": "kdasgupta.as - Skype™",
+    "percent": 0.2,
+    "swallows": [
+       {
+       // "class": "^Skype$",
+       // "instance": "^skype$",
+       // "title": "^kdasgupta\\.as\\ \\-\\ Skype™$"
+       }
+    ],
+    "type": "con"
+}
+

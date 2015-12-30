@@ -1,0 +1,343 @@
+// vim:ts=4:sw=4:et
+{
+    // workspace with 2 children
+    "border": "normal",
+    "floating": "auto_off",
+    "fullscreen_mode": 1,
+    "layout": "splith",
+    "percent": 0.0833333333333333,
+    "type": "workspace",
+    "nodes": [
+        {
+            // splitv split container with 2 children
+            "border": "normal",
+            "floating": "auto_off",
+            "layout": "splitv",
+            "percent": 0.5,
+            "type": "con",
+            "nodes": [
+                {
+                    "border": "normal",
+                    "floating": "auto_off",
+                    "geometry": {
+                       "height": 427,
+                       "width": 642,
+                       "x": 0,
+                       "y": 0
+                    },
+                    "name": "kdasgupta@catscradle: ~",
+                    "percent": 0.5,
+                    "swallows": [
+                       {
+                       // "class": "^X\\-terminal\\-emulator$",
+                       // "instance": "^x\\-terminal\\-emulator$",
+                       // "title": "^kdasgupta\\@catscradle\\:\\ \\~$"
+                       }
+                    ],
+                    "type": "con"
+                },
+                {
+                    "border": "normal",
+                    "floating": "auto_off",
+                    "geometry": {
+                       "height": 427,
+                       "width": 642,
+                       "x": 0,
+                       "y": 0
+                    },
+                    "name": "kdasgupta@catscradle: ~",
+                    "percent": 0.5,
+                    "swallows": [
+                       {
+                       // "class": "^X\\-terminal\\-emulator$",
+                       // "instance": "^x\\-terminal\\-emulator$",
+                       // "title": "^kdasgupta\\@catscradle\\:\\ \\~$"
+                       }
+                    ],
+                    "type": "con"
+                }
+            ]
+        },
+        {
+            // splith split container with 1 children
+            "border": "normal",
+            "floating": "auto_off",
+            "layout": "splith",
+            "percent": 0.5,
+            "type": "con",
+            "nodes": [
+                {
+                    // tabbed split container with 1 children
+                    "border": "normal",
+                    "floating": "auto_off",
+                    "layout": "tabbed",
+                    "percent": 1,
+                    "type": "con",
+                    "nodes": [
+                        {
+                            // stacked split container with 1 children
+                            "border": "normal",
+                            "floating": "auto_off",
+                            "layout": "stacked",
+                            "percent": 1,
+                            "type": "con",
+                            "nodes": [
+                                {
+                                    "border": "normal",
+                                    "floating": "auto_off",
+                                    "geometry": {
+                                       "height": 427,
+                                       "width": 642,
+                                       "x": 0,
+                                       "y": 0
+                                    },
+                                    "name": "i3-save-tree --output=LVDS1 > .i3/ws.json",
+                                    "percent": 1,
+                                    "swallows": [
+                                       {
+                                       // "class": "^X\\-terminal\\-emulator$",
+                                       // "instance": "^x\\-terminal\\-emulator$",
+                                       // "title": "^i3\\-save\\-tree\\ \\-\\-output\\=LVDS1\\ \\>\\ \\.i3\\/ws\\.json$"
+                                       }
+                                    ],
+                                    "type": "con"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+{
+    // workspace with 1 children
+    "border": "normal",
+    "floating": "auto_off",
+    "layout": "splith",
+    "percent": 0.0833333333333333,
+    "type": "workspace",
+    "nodes": [
+        {
+            "border": "normal",
+            "floating": "auto_off",
+            "geometry": {
+               "height": 861,
+               "width": 1596,
+               "x": 0,
+               "y": 0
+            },
+            "name": "Infinicenter : Environments - Mozilla Firefox",
+            "percent": 1,
+            "swallows": [
+               {
+               // "class": "^Firefox$",
+               // "instance": "^Navigator$",
+               // "title": "^Infinicenter\\ \\:\\ Environments\\ \\-\\ Mozilla\\ Firefox$",
+               // "window_role": "^browser$"
+               }
+            ],
+            "type": "con"
+        }
+    ]
+}
+
+{
+    // workspace with 1 children
+    "border": "normal",
+    "floating": "auto_off",
+    "layout": "splith",
+    "percent": 0.166666666666667,
+    "type": "workspace",
+    "nodes": [
+        {
+            // stacked split container with 2 children
+            "border": "normal",
+            "floating": "auto_off",
+            "layout": "stacked",
+            "percent": 1,
+            "type": "con",
+            "nodes": [
+                {
+                    "border": "normal",
+                    "floating": "auto_off",
+                    "geometry": {
+                       "height": 876,
+                       "width": 934,
+                       "x": 512,
+                       "y": 24
+                    },
+                    "name": "i3: Layout saving in i3 - Google Chrome",
+                    "percent": 0.5,
+                    "swallows": [
+                       {
+                       // "class": "^Google\\-chrome$",
+                       // "instance": "^Google\\-chrome$",
+                       // "title": "^i3\\:\\ Layout\\ saving\\ in\\ i3\\ \\-\\ Google\\ Chrome$",
+                       // "window_role": "^browser$"
+                       }
+                    ],
+                    "type": "con"
+                },
+                {
+                    "border": "normal",
+                    "floating": "auto_off",
+                    "geometry": {
+                       "height": 861,
+                       "width": 1596,
+                       "x": 12,
+                       "y": 28
+                    },
+                    "name": "Inbox (15) - ourlavender24@gmail.com - Gmail - Google Chrome",
+                    "percent": 0.5,
+                    "swallows": [
+                       {
+                       // "class": "^Google\\-chrome$",
+                       // "instance": "^Google\\-chrome$",
+                       // "title": "^Inbox\\ \\(15\\)\\ \\-\\ ourlavender24\\@gmail\\.com\\ \\-\\ Gmail\\ \\-\\ Google\\ Chrome$",
+                       // "window_role": "^browser$"
+                       }
+                    ],
+                    "type": "con"
+                }
+            ]
+        }
+    ]
+}
+
+{
+    // workspace with 2 children
+    "border": "normal",
+    "floating": "auto_off",
+    "layout": "splith",
+    "percent": 0.333333333333333,
+    "type": "workspace",
+    "nodes": [
+        {
+            "border": "normal",
+            "floating": "auto_off",
+            "geometry": {
+               "height": 848,
+               "width": 1549,
+               "x": 51,
+               "y": 924
+            },
+            "name": "Gabriel Preda - Skype™",
+            "percent": 0.8,
+            "swallows": [
+               {
+               // "class": "^Skype$",
+               // "instance": "^skype$",
+               // "title": "^Gabriel\\ Preda\\ \\-\\ Skype™$",
+               // "window_role": "^ConversationsWindow$"
+               }
+            ],
+            "type": "con"
+        },
+        {
+            "border": "normal",
+            "floating": "auto_off",
+            "geometry": {
+               "height": 861,
+               "width": 316,
+               "x": 0,
+               "y": 0
+            },
+            "name": "kdasgupta.as - Skype™",
+            "percent": 0.2,
+            "swallows": [
+               {
+               // "class": "^Skype$",
+               // "instance": "^skype$",
+               // "title": "^kdasgupta\\.as\\ \\-\\ Skype™$"
+               }
+            ],
+            "type": "con"
+        }
+    ]
+}
+
+{
+    // workspace with 1 children
+    "border": "normal",
+    "floating": "auto_off",
+    "layout": "splith",
+    "percent": 0.166666666666667,
+    "type": "workspace",
+    "nodes": [
+        {
+            // splith split container with 1 children
+            "border": "normal",
+            "floating": "auto_off",
+            "layout": "splith",
+            "percent": 1,
+            "type": "con",
+            "nodes": [
+                {
+                    "border": "normal",
+                    "floating": "auto_off",
+                    "geometry": {
+                       "height": 900,
+                       "width": 1600,
+                       "x": 0,
+                       "y": 18
+                    },
+                    "name": "Inbox (1959 unread, 14014 total) - Evolution",
+                    "percent": 1,
+                    "swallows": [
+                       {
+                       // "class": "^Evolution$",
+                       // "instance": "^evolution$",
+                       // "title": "^Inbox\\ \\(1959\\ unread\\,\\ 14014\\ total\\)\\ \\-\\ Evolution$",
+                       // "window_role": "^EShellWindow\\-140694222136000$"
+                       }
+                    ],
+                    "type": "con"
+                }
+            ]
+        }
+    ]
+}
+
+{
+    // workspace with 1 children
+    "border": "normal",
+    "floating": "auto_off",
+    "layout": "splith",
+    "percent": 0.166666666666667,
+    "type": "workspace",
+    "nodes": [
+        {
+            // stacked split container with 1 children
+            "border": "normal",
+            "floating": "auto_off",
+            "layout": "stacked",
+            "percent": 1,
+            "type": "con",
+            "nodes": [
+                {
+                    "border": "normal",
+                    "floating": "auto_off",
+                    "geometry": {
+                       "height": 427,
+                       "width": 642,
+                       "x": 0,
+                       "y": 0
+                    },
+                    "name": "ranger",
+                    "percent": 1,
+                    "swallows": [
+                       {
+                       // "class": "^X\\-terminal\\-emulator$",
+                       // "instance": "^x\\-terminal\\-emulator$",
+                       // "title": "^ranger$"
+                       }
+                    ],
+                    "type": "con"
+                }
+            ]
+        }
+    ]
+}
+
