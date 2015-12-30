@@ -65,6 +65,6 @@ fi
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" ]]
 
-if [-d "$HOME/anaconda2"]; then
+if [ -d "$HOME/anaconda2" ]; then
     export PATH="$HOME/anaconda2/bin:$PATH"
 fi
