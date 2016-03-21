@@ -186,3 +186,6 @@ bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute $sink toggle
 # exec --no-startup-id "i3-msg 'workspace 3; append_layout /home/kdasgupta/.i3/ws-3.json'"
 # exec --no-startup-id "i3-msg 'workspace 4; append_layout /home/kdasgupta/.i3/ws-4.json'"
 # exec --no-startup-id "i3-msg 'workspace 5; append_layout /home/kdasgupta/.i3/ws-5.json'"
+#
+# Power Management
+exec –no-startup-id sleep 3 && xfce4-power-manager
