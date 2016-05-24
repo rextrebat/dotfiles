@@ -50,6 +50,8 @@ Bundle 'motemen/git-vim'
 Bundle 'kien/tabman.vim'
 " Airline
 Bundle 'vim-airline/vim-airline'
+" Airline Themes
+Bundle 'vim-airline/vim-airline-themes'
 " Terminal Vim with 256 colors colorscheme
 Bundle 'fisadev/fisa-vim-colorscheme'
 " Consoles as buffers
