@@ -8,6 +8,9 @@
 " no vi-compatible
 set nocompatible
 
+" Check if I am in Google
+let google_vimrc=expand('~/.vim/google_vimrc')
+
 " Setting up Vundle - the vim plugin bundler
 let iCanHazVundle=1
 let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
@@ -33,8 +36,6 @@ Bundle 'gmarik/vundle'
 
 " Plugins from github repos:
 
-" Python and PHP Debugger
-Bundle 'fisadev/vim-debug.vim'
 " Better file browser
 Bundle 'scrooloose/nerdtree'
 " Code commenter
@@ -42,13 +43,11 @@ Bundle 'scrooloose/nerdcommenter'
 " Class/module browser
 Bundle 'majutsushi/tagbar'
 " Code and files fuzzy finder
-Bundle 'kien/ctrlp.vim'
+Bundle 'ctrlpvim/ctrlp.vim'
 " Extension to ctrlp, for fuzzy command finder
 Bundle 'fisadev/vim-ctrlp-cmdpalette'
 " Zen coding
 Bundle 'mattn/emmet-vim'
-" Git integration
-Bundle 'motemen/git-vim'
 " Tab list panel
 Bundle 'kien/tabman.vim'
 " Airline
@@ -59,8 +58,6 @@ Bundle 'vim-airline/vim-airline-themes'
 Bundle 'fisadev/fisa-vim-colorscheme'
 " Consoles as buffers
 Bundle 'rosenfeld/conque-term'
-" Pending tasks list
-Bundle 'fisadev/FixedTaskList.vim'
 " Surround
 Bundle 'tpope/vim-surround'
 " Autoclose
@@ -70,10 +67,10 @@ Bundle 'michaeljsmith/vim-indent-object'
 " Python mode (indentation, doc, refactor, lints, code checking, motion and
 " operators, highlighting, run and ipdb breakpoints)
 Bundle 'klen/python-mode'
-" Better autocompletion
-" Bundle 'Shougo/neocomplcache.vim'
-" Even Better autocompletion
-Bundle 'Valloric/YouCompleteMe'
+if !filereadable(google_vimrc)
+    " Even Better autocompletion
+    Bundle 'Valloric/YouCompleteMe'
+endif
 " Snippets manager (SnipMate), dependencies, and snippets repo
 Bundle 'MarcWeber/vim-addon-mw-utils'
 Bundle 'tomtom/tlib_vim'
@@ -110,6 +107,8 @@ Bundle 'Wombat'
 Bundle 'YankRing.vim'
 " Calendar
 Bundle 'itchyny/calendar.vim'
+" Git Integration
+Bundle "tpope/vim-fugitive"
 
 " ============================================================================
 " Install plugins the first time vim runs
@@ -146,6 +145,15 @@ set ls=2
 set incsearch
 " highlighted search results
 set hlsearch
+
+" auto and smart indent
+set autoindent smartindent nocindent
+
+" ignorecase smartcase
+set ignorecase smartcase
+
+" highlight current line
+set cursorline
 
 " syntax highlight on
 syntax on
@@ -237,6 +245,13 @@ if !isdirectory(&undodir)
     call mkdir(&undodir, "p")
 endif
 
+" Set leader explicitly to ','
+let mapleader=','
+
+" Toggle paste
+set pastetoggle=<F2>
+
+
 " ============================================================================
 " Plugins settings and mappings
 " Edit them as you wish.
@@ -257,25 +272,6 @@ nmap ,t :NERDTreeFind<CR>
 " don;t show these file types
 let NERDTreeIgnore = ['\.pyc$', '\.pyo$']
 
-
-" Tasklist ------------------------------
-
-" show pending tasks list
-map <F2> :TaskList<CR>
-
-" Vim-debug ------------------------------
-
-" disable default mappings, have a lot of conflicts with other plugins
-let g:vim_debug_disable_mappings = 1
-" add some useful mappings
-map <F5> :Dbg over<CR>
-map <F6> :Dbg into<CR>
-map <F7> :Dbg out<CR>
-map <F8> :Dbg here<CR>
-map <F9> :Dbg break<CR>
-map <F10> :Dbg watch<CR>
-map <F11> :Dbg down<CR>
-map <F12> :Dbg up<CR>
 
 " CtrlP ------------------------------
 
@@ -441,3 +437,10 @@ if 'VIRTUAL_ENV' in os.environ:
     activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
     execfile(activate_this, dict(__file__=activate_this))
 EOF
+
+
+" Google vim settings ------------------------------------
+" --------------------------------------------------------
+if filereadable(google_vimrc)
+    source ~/.vim/google_vimrc
+endif
