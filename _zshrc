@@ -80,3 +80,8 @@ if [ -f '/home/kdasgupta/temp/google-cloud-sdk/path.zsh.inc' ]; then source '/ho
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/home/kdasgupta/temp/google-cloud-sdk/completion.zsh.inc' ]; then source '/home/kdasgupta/temp/google-cloud-sdk/completion.zsh.inc'; fi
+
+# Snap
+if [ -d "/snap/bin" ]; then
+    export PATH="/snap/bin:$PATH"
+fi
