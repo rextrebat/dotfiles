@@ -80,7 +80,7 @@ bindsym $mod+d exec dmenu_run
 # bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 
 # start rofi (a better program launcher)
-bindsym $mod+space exec "rofi -combi-modi window,drun -show combi -modi combi"
+bindsym $mod+o exec "rofi -combi-modi window,drun -show combi -modi combi"
 
 # change focus
 bindsym $mod+j focus left
