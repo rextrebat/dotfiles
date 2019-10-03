@@ -89,3 +89,5 @@ fi
 
 # Save every command in history
 setopt inc_append_history
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
