@@ -51,6 +51,12 @@ echo "[*] Linking configs"
 ln -sf /home/kdasgupta/workspace/dotfiles/config/i3 ~/.config/i3
 ln -sf /home/kdasgupta/workspace/dotfiles/config/polybar ~/.config/polybar
 
+echo "[*] Installing compton"
+sudo apt install compton -y
+
+echo "[*] Linking configs"
+ln -sf /home/kdasgupta/workspace/dotfiles/config/compton ~/.config/compton
+
 #
 # Xresources
 
