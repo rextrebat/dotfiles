@@ -223,7 +223,7 @@ exec --no-startup-id blueman-applet
 exec –no-startup-id sleep 3 && xfce4-power-manager
 
 # Autolock
-exec --no-startup-id xautolock -time 5 -locker 'i3lock --color=000000' -corners 000-
+exec --no-startup-id xautolock -time 5 -locker -corners 000- 'i3lock --color=000000'
 
 
 # Append Layout
