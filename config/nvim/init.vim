@@ -48,6 +48,9 @@ Plug 'honza/vim-snippets'
 Plug 'metakirby5/codi.vim'
 Plug 'dkarter/bullets.vim'
 
+" Go Development
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
 " Entertainment
 "Plug 'ryanss/vim-hackernews'
 
