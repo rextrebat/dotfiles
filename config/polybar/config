@@ -66,7 +66,7 @@ font-2 = Font\ Awesome:pixelsize=12;2
 
 modules-left = github reddit xwindow 
 modules-center = i3
-modules-right = xkeyboard network eth battery date powermenu
+modules-right = xkeyboard eth date powermenu
 
 tray-position = left
 tray-padding = 2
@@ -118,8 +118,8 @@ font-2 = Font\ Awesome\ 5\ Brands:style=Solid:pixelsize=12;2
 font-3 = Hack\ Nerd\ Font:pixelsize=12;2
 
 modules-left = memory cpu temperature
-modules-center = mpd
-modules-right = xbacklight pulseaudio
+modules-center = 
+modules-right = pulseaudio
 
 
 ;wm-restack = bspwm
@@ -378,7 +378,7 @@ interface = wwp0s29u1u6i6
 interval = 3.0
 
 format-connected-prefix = " "
-format-connected-prefix-foreground = ${colors.foreground-alt}
+format-connected-prefix-foreground = ${colors.shade5}
 label-connected = %local_ip%
 
 format-disconnected =
