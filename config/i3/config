@@ -214,16 +214,16 @@ exec_always --no-startup-id ~/.config/polybar/launch.sh
 exec --no-startup-id nm-applet
 
 # Start SpiderOak
-exec --no-startup-id SpiderOak
+# exec --no-startup-id SpiderOak
 
 # Start blueman-applet
-exec --no-startup-id blueman-applet
+# exec --no-startup-id blueman-applet
 
 # Power Management
-exec –no-startup-id sleep 3 && xfce4-power-manager
+# exec –no-startup-id sleep 3 && xfce4-power-manager
 
 # Autolock
-exec --no-startup-id xautolock -time 5 -corners 000- -locker 'i3lock --color=000000'
+exec_always --no-startup-id xautolock -detectsleep -time 5 -locker 'i3lock -d -c 000000'
 
 
 # Append Layout
