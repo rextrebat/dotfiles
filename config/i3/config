@@ -223,7 +223,7 @@ exec --no-startup-id nm-applet
 # exec –no-startup-id sleep 3 && xfce4-power-manager
 
 # Autolock
-exec_always --no-startup-id xautolock -detectsleep -time 5 -locker 'i3lock -d -c 000000'
+exec_always --no-startup-id xautolock -detectsleep -time 5 -locker 'i3lock -d -c 000000' -corners 000-
 
 
 # Append Layout
