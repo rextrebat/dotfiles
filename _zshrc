@@ -93,3 +93,5 @@ setopt inc_append_history
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 export GOPATH=/home/kdasgupta/go
+
+export VIRTUAL_ENV_DISABLE_PROMPT=
