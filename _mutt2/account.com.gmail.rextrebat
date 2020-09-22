@@ -1,0 +1,12 @@
+set imap_user = "rextrebat@gmail.com"
+set imap_pass = `getpassword EMaili/rextrebat@gmail.com`
+set smtp_url = "smtp://rextrebat@smtp.gmail.com:587/"
+set smtp_pass = `getpassword EMaili/rextrebat@gmail.com`
+set from = "rextrebat@gmail.com"
+set realname = "rextrebat"
+set folder = "imaps://imap.gmail.com:993"
+set spoolfile = "+INBOX"
+set postponed = "+[Gmail]/Drafts"
+set header_cache = ~/.mutt/com.gmail.rextrebat/cache/headers
+set message_cachedir = ~/.mutt/com.gmail.rextrebat/cache/bodies
+set certificate_file = ~/.mutt/com.gmail.rextrebat/certificates

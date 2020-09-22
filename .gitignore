@@ -1,3 +1,5 @@
-_vim
+_vim/
+
 _gnupg/
-config/nvim/plugged
+
+config/nvim/plugged/*

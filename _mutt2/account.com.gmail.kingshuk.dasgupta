@@ -1,0 +1,12 @@
+set imap_user = "kingshuk.dasgupta@gmail.com"
+set imap_pass = `getpassword EMaili/kingshuk.dasgupta@gmail.com`
+set smtp_url = "smtp://kingshuk.dasgupta@smtp.gmail.com:587/"
+set smtp_pass = `getpassword EMaili/kingshuk.dasgupta@gmail.com`
+set from = "kingshuk.dasgupta@gmail.com"
+set realname = "Kingshuk Dasgupta"
+set folder = "imaps://imap.gmail.com:993"
+set spoolfile = "+INBOX"
+set postponed = "+[Gmail]/Drafts"
+set header_cache = ~/.mutt/com.gmail.kingshuk.dasgupta/cache/headers
+set message_cachedir = ~/.mutt/com.gmail.kingshuk.dasgupta/cache/bodies
+set certificate_file = ~/.mutt/com.gmail.kingshuk.dasgupta/certificates
