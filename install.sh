@@ -19,9 +19,15 @@ then
     rm -rf ~/.oh-my-zsh
     git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
 
+    echo "[*] Install virtualenvwrapper"
+    sudo pip3 install virtualenvwrapper
+
     echo "[*] Linking zshrc"
 
     ln -sf /home/kdasgupta/workspace/dotfiles/_zshrc ~/.zshrc
+
+    echo "[*] Set default shell zsh"
+    chsh -s $(which zsh)
 fi
 
 #
