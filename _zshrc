@@ -95,3 +95,8 @@ setopt inc_append_history
 export GOPATH=/home/kdasgupta/go
 
 export VIRTUAL_ENV_DISABLE_PROMPT=
+
+# Pyenv
+export PATH="/home/kdasgupta/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"

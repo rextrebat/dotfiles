@@ -92,6 +92,14 @@ then
 
 fi
 
+read -p "Install pyenv?" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    echo "[*] Installing pyenv"
+
+    curl https://pyenv.run | bash
+fi
 #
 # gnupg
 
