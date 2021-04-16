@@ -1,0 +1,45 @@
+# Customize to your needs...
+# specific exports for /opt/software/
+#
+# Titanium Studio
+if [ -d "/opt/software/Titanium_Studio" ]; then
+    export MOZILLA_FIVE_HOME=/usr/lib/mozilla
+    export UBUNTU_MENUPROXY=0
+    export PATH=$PATH:/opt/software/Titanium_Studio
+fi
+
+# Android - adt
+if [ -d "/opt/software/adt" ]; then
+    export PATH=$PATH:/opt/software/adt/sdk/tools
+    export PATH=$PATH:/opt/software/adt/sdk/platform-tools
+fi
+# end specific exports for /opt/software/
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" ]]
+
+if [ -d "$HOME/anaconda2" ]; then
+    export PATH="$HOME/anaconda2/bin:$PATH"
+fi
+
+# set GOPATH if the workspace is created
+if [ -d "$HOME/workspace/gows" ]; then
+    export GOPATH="$HOME/workspace/gows"
+    export PATH=$PATH:$(go env GOPATH)/bin
+fi
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/kdasgupta/temp/google-cloud-sdk/path.zsh.inc' ]; then source '/home/kdasgupta/temp/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/kdasgupta/temp/google-cloud-sdk/completion.zsh.inc' ]; then source '/home/kdasgupta/temp/google-cloud-sdk/completion.zsh.inc'; fi
+
+# Snap
+if [ -d "/snap/bin" ]; then
+    export PATH="/snap/bin:$PATH"
+fi
+
+# Pyenv
+export PATH="/home/kdasgupta/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"

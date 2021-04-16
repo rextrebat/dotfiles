@@ -24,6 +24,7 @@ then
 
     echo "[*] Linking zshrc"
 
+    ln -sf /home/kdasgupta/workspace/dotfiles/_zshenv ~/.zshenv
     ln -sf /home/kdasgupta/workspace/dotfiles/_zshrc ~/.zshrc
 
     echo "[*] Set default shell zsh"
