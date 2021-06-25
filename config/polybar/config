@@ -60,10 +60,11 @@ padding-right = 1
 module-margin-left = 0
 module-margin-right = 1
 
-font-0 = DejaVuSansMono:pixelsize=10;2
-font-1 = Font\ Awesome:style=Regular:pixelsize=12;2
+font-0 = "DejaVuSansMono:pixelsize=10;2"
+font-1 = "Font\ Awesome:style=Regular:pixelsize=12;2"
 ; font-2 = Font\ Awesome:pixelsize=12;2
-font-2 = "Wuncon Siji:pixelsize=10;1"
+; font-2 = "Wuncon Siji:pixelsize=10;1"
+font-2 = siji:pixelsize=10;1
 
 modules-left = github reddit xwindow 
 modules-center = i3
@@ -113,10 +114,16 @@ padding-right = 1
 module-margin-left = 1
 module-margin-right = 1
 
-font-0 = DejaVu\ Sans\ Mono\ For\ Powerline:pixelsize=10;2
-font-1 = Font\ Awesome\ 5\ Free:style=Solid:pixelsize=12;2
-font-2 = Font\ Awesome\ 5\ Brands:style=Solid:pixelsize=12;2
-font-3 = Hack\ Nerd\ Font:pixelsize=12;2
+font-0 = "DejaVuSansMono:pixelsize=10;2"
+font-1 = "Font\ Awesome:style=Regular:pixelsize=12;2"
+; font-2 = Font\ Awesome:pixelsize=12;2
+; font-2 = "Wuncon Siji:pixelsize=10;1"
+font-2 = siji:pixelsize=10;1
+
+;font-0 = "DejaVu\ Sans\ Mono\ For\ Powerline:pixelsize=10;2"
+;font-1 = "Font\ Awesome\ 5\ Free:style=Solid:pixelsize=12;2"
+;font-2 = "Font\ Awesome\ 5\ Brands:style=Solid:pixelsize=12;2"
+;font-3 = "Hack\ Nerd\ Font:pixelsize=12;2"
 
 modules-left = memory cpu temperature
 modules-center = 
@@ -324,7 +331,8 @@ interval = 3
 ;   <bar-swap-free>
 ;   <ramp-swap-used>
 ;   <ramp-swap-free>
-format =  <label> <bar-used>
+; format =  <label> <bar-used>
+format = <label> <bar-used>
 
 ; Available tokens:
 ;   %percentage_used% (default)
