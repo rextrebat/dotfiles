@@ -52,7 +52,7 @@ Plug 'dkarter/bullets.vim'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 " Entertainment
-"Plug 'ryanss/vim-hackernews'
+Plug 'dansomething/vim-hackernews'
 
 call plug#end()
 
