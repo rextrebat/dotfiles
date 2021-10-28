@@ -70,8 +70,12 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     echo "[*] Installing i3-gaps and polybar"
 
-    sudo add-apt-repository -y ppa:kgilmer/speed-ricer
+    sudo add-apt-repository -y ppa:regolith-linux/release
+    sudo apt update
     sudo apt install i3-gaps polybar -y
+
+    echo "[*] Installing additional fonts"
+    sudo apt install fonts-font-awesome -y
 
     echo "[*] Linking configs"
 
