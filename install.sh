@@ -72,7 +72,7 @@ then
 
     sudo add-apt-repository -y ppa:regolith-linux/release
     sudo apt update
-    sudo apt install i3-gaps polybar -y
+    sudo apt install i3-gaps polybar xautolock -y
 
     echo "[*] Installing additional fonts"
     sudo apt install fonts-font-awesome -y
