@@ -44,3 +44,7 @@ export PATH="/home/kdasgupta/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 export PATH="/home/kdasgupta/.pyenv/shims:$PATH"
+
+# Go
+export GOPATH=/home/kdasgupta/go
+export PATH=\$GOPATH:\$GOPATH/bin:\$PATH
