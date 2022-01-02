@@ -47,4 +47,4 @@ export PATH="/home/kdasgupta/.pyenv/shims:$PATH"
 
 # Go
 export GOPATH=/home/kdasgupta/go
-export PATH=\$GOPATH:\$GOPATH/bin:\$PATH
+export PATH=$GOPATH:$GOPATH/bin:$PATH

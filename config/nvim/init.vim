@@ -47,6 +47,7 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'metakirby5/codi.vim'
 Plug 'dkarter/bullets.vim'
+Plug 'jamessan/vim-gnupg'
 
 " Go Development
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
