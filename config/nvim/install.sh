@@ -12,8 +12,14 @@ mkdir -p ~/.config/nvim
 
 # Install nvim (and its dependencies: pip3, git), Python 3 and ctags (for tagbar)
 echo '[*] App installing Neovim and its dependencies (Python 3 and git), and dependencies for tagbar (exuberant-ctags) ...'
+sudo apt remove neovim -y
+sudo add-apt-repository ppa:neovim-ppa/stable
 sudo apt update
 sudo apt install neovim python3 python3-pip git curl exuberant-ctags -y
+echo '[*] ...deno for ddc'
+curl -Lo /tmp/deno.zip "https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip"
+sudo unzip -d /usr/local/bin /tmp/deno.zip
+
 
 # Updating alternatives
 sudo update-alternatives --install /usr/bin/vi vi /usr/bin/nvim 60
