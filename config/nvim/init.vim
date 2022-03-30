@@ -14,7 +14,6 @@ Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-journal'
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'nightsense/forgotten'
-Plug 'zaki/zazen'
 
 " Aethetics - Additional
 Plug 'nightsense/nemo'
@@ -23,32 +22,60 @@ Plug 'chriskempson/tomorrow-theme', { 'rtp': 'vim' }
 Plug 'rhysd/vim-color-spring-night'
 
 " Functionalities
+" Git functionality
 Plug 'tpope/vim-fugitive'
+" Sensible Defaults
 Plug 'tpope/vim-sensible'
+" Surroundings - parens, brackets, quotes...
 Plug 'tpope/vim-surround'
+" Continuously updated session files
 Plug 'tpope/vim-obsession'
+" Show tags of current file - get overview of structure ,w
 Plug 'majutsushi/tagbar'
+" Filesystem explorer ,q
 Plug 'scrooloose/nerdtree'
+" Comment functions ,cc
 Plug 'scrooloose/nerdcommenter'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'zchee/deoplete-jedi'
+" Auto Complete - ddc related (https://github.com/Shougo/ddc.vim)
+Plug 'Shougo/ddc.vim'
+Plug 'vim-denops/denops.vim'
+Plug 'Shougo/ddc-around'
+Plug 'Shougo/ddc-matcher_head'
+Plug 'Shougo/ddc-sorter_rank'
+" Use <Tab> for completion needs
 Plug 'ervandew/supertab'
+" Auto pair parens, brackets, quotes
 Plug 'jiangmiao/auto-pairs'
+" For Column Alignment :EasyAlign
 Plug 'junegunn/vim-easy-align'
+" Autoclose HTML tags
 Plug 'alvan/vim-closetag'
+" Correct common spelling mistakes - just read the examples
 Plug 'tpope/vim-abolish'
+" Show thin vertical lines at each indent level
 Plug 'Yggdroot/indentLine'
+" :FZF
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+" Huge collection of language packs for Vim
 Plug 'sheerun/vim-polyglot'
+" Highlight colors with :ColorHighlight
 Plug 'chrisbra/Colorizer'
+" Generates Python docstring :Pydocstring
 Plug 'heavenshell/vim-pydocstring'
+" Dummy Text Generator :Loremipsum
 Plug 'vim-scripts/loremipsum'
+" Ultimate snippets plugin - read docs
 Plug 'SirVer/ultisnips'
+" Snippets for various languages
 Plug 'honza/vim-snippets'
+" Interactive scratchpad - e.g. using Python through shell wrapper
 Plug 'metakirby5/codi.vim'
+" Automated bullet list
 Plug 'dkarter/bullets.vim'
+" Secure editing of gpg files 
 Plug 'jamessan/vim-gnupg'
+" Buffer Explorer
 Plug 'jlanzarotta/bufexplorer'
 
 " Go Development
@@ -92,6 +119,31 @@ set clipboard=unnamedplus
 
 """ Plugin Configurations
 
+" Limelight
+" Color name (:help cterm-colors) or ANSI code
+let g:limelight_conceal_ctermfg = 'gray'
+let g:limelight_conceal_ctermfg = 240
+
+" Color name (:help gui-colors) or RGB color
+let g:limelight_conceal_guifg = 'DarkGray'
+let g:limelight_conceal_guifg = '#777777'
+
+" Default: 0.5
+let g:limelight_default_coefficient = 0.7
+
+" Number of preceding/following paragraphs to include (default: 0)
+let g:limelight_paragraph_span = 1
+
+" Beginning/end of paragraph
+"   When there's no empty line between the paragraphs
+"   and each paragraph starts with indentation
+let g:limelight_bop = '^\s'
+let g:limelight_eop = '\ze\n^\s'
+
+" Highlighting priority (default: 10)
+"   Set it to -1 not to overrule hlsearch
+let g:limelight_priority = -1"
+
 " NERDTree
 let NERDTreeShowHidden=1
 let g:NERDTreeDirArrowExpandable = '↠'
@@ -110,10 +162,50 @@ tmap <C-w> <Esc><C-w>
 autocmd BufWinEnter,WinEnter term://* startinsert
 autocmd BufLeave term://* stopinsert
 
-" Deoplete
-let g:deoplete#enable_at_startup = 1
-" Disable documentation window
-set completeopt-=preview
+" ddc
+" Use around source.
+" https://github.com/Shougo/ddc-around
+call ddc#custom#patch_global('sources', ['around'])
+
+" Use matcher_head and sorter_rank.
+" https://github.com/Shougo/ddc-matcher_head
+" https://github.com/Shougo/ddc-sorter_rank
+call ddc#custom#patch_global('sourceOptions', {
+      \ '_': {
+      \   'matchers': ['matcher_head'],
+      \   'sorters': ['sorter_rank']},
+      \ })
+
+" Change source options
+call ddc#custom#patch_global('sourceOptions', {
+      \ 'around': {'mark': 'A'},
+      \ })
+call ddc#custom#patch_global('sourceParams', {
+      \ 'around': {'maxSize': 500},
+      \ })
+
+" Customize settings on a filetype
+call ddc#custom#patch_filetype(['c', 'cpp'], 'sources', ['around', 'clangd'])
+call ddc#custom#patch_filetype(['c', 'cpp'], 'sourceOptions', {
+      \ 'clangd': {'mark': 'C'},
+      \ })
+call ddc#custom#patch_filetype('markdown', 'sourceParams', {
+      \ 'around': {'maxSize': 100},
+      \ })
+
+" Mappings
+
+" <TAB>: completion.
+inoremap <silent><expr> <TAB>
+\ ddc#map#pum_visible() ? '<C-n>' :
+\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
+\ '<TAB>' : ddc#map#manual_complete()
+
+" <S-TAB>: completion back.
+inoremap <expr><S-TAB>  ddc#map#pum_visible() ? '<C-p>' : '<C-h>'
+
+" Use ddc.
+call ddc#enable()
 
 " Supertab
 let g:SuperTabDefaultCompletionType = "<C-n>"
@@ -202,12 +294,6 @@ function! ColorForgotten()
     IndentLinesDisable
 endfunction
 
-" Zazen Mode (Black & White)
-function! ColorZazen()
-    let g:airline_theme='badcat'
-    color zazen
-    IndentLinesEnable
-endfunction
 
 """ Custom Mappings
 
