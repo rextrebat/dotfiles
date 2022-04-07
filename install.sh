@@ -17,7 +17,7 @@ then
     echo "[*] Downloading oh-my-zsh"
 
     rm -rf ~/.oh-my-zsh
-    git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
+    git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
 
     echo "[*] Install virtualenvwrapper"
     sudo pip3 install virtualenvwrapper
