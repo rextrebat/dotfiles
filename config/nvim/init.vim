@@ -77,6 +77,8 @@ Plug 'dkarter/bullets.vim'
 Plug 'jamessan/vim-gnupg'
 " Buffer Explorer
 Plug 'jlanzarotta/bufexplorer'
+" Markdown Preview
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 " Go Development
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
