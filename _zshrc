@@ -54,4 +54,4 @@ setopt inc_append_history
 export VIRTUAL_ENV_DISABLE_PROMPT=
 
 # EDITOR
-EDITOR=vi
+export EDITOR=vi
