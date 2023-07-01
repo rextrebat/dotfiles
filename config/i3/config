@@ -213,6 +213,9 @@ exec_always --no-startup-id ~/.config/polybar/launch.sh
 # Start nm-applet
 exec --no-startup-id nm-applet
 
+# Set dpi
+exec xrandr --dpi 250
+
 # Start SpiderOak
 # exec --no-startup-id SpiderOak
 
