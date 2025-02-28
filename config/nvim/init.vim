@@ -87,7 +87,7 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'dansomething/vim-hackernews'
 
 " Org Mode
-Plug 'nvim-orgmode/orgmode'
+# Plug 'nvim-orgmode/orgmode'
 
 call plug#end()
 
@@ -199,12 +199,12 @@ call ddc#custom#patch_filetype('markdown', 'sourceParams', {
       \ })
 
 " Org Mode
-lua << EOF
-require('orgmode').setup({
-  org_agenda_files = '~/orgfiles/**/*',
-  org_default_notes_file = '~/orgfiles/refile.org',
-})
-EOF
+# lua << EOF
+# require('orgmode').setup({
+  # org_agenda_files = '~/orgfiles/**/*',
+  # org_default_notes_file = '~/orgfiles/refile.org',
+# })
+# EOF
 
 
 " Mappings
