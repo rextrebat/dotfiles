@@ -13,10 +13,8 @@ Plug 'junegunn/limelight.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-journal'
 Plug 'junegunn/rainbow_parentheses.vim'
-Plug 'nightsense/forgotten'
 
 " Aethetics - Additional
-Plug 'nightsense/nemo'
 Plug 'yuttie/hydrangea-vim'
 Plug 'chriskempson/tomorrow-theme', { 'rtp': 'vim' }
 Plug 'rhysd/vim-color-spring-night'
@@ -288,15 +286,6 @@ function! ColorSeoul256()
     IndentLinesDisable
 endfunction
 
-" Forgotten Mode (Light)
-function! ColorForgotten()
-    " Light airline themes: tomorrow, silver, alduin
-    " Light colors: forgotten-light, nemo-light
-    let g:airline_theme='tomorrow'
-    color forgotten-light
-    IndentLinesDisable
-endfunction
-
 
 """ Custom Mappings
 
@@ -308,7 +297,6 @@ nmap <leader>ee :Colors<CR>
 nmap <leader>ea :AirlineTheme 
 nmap <leader>e1 :call ColorDracula()<CR>
 nmap <leader>e2 :call ColorSeoul256()<CR>
-nmap <leader>e3 :call ColorForgotten()<CR>
 nmap <leader>e4 :call ColorZazen()<CR>
 nmap <leader>r :so ~/.config/nvim/init.vim<CR>
 nmap <leader>t :call TrimWhitespace()<CR>
