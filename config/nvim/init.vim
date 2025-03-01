@@ -86,9 +86,6 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " Entertainment
 Plug 'dansomething/vim-hackernews'
 
-" Org Mode
-# Plug 'nvim-orgmode/orgmode'
-
 call plug#end()
 
 """ Python3 VirtualEnv
@@ -197,14 +194,6 @@ call ddc#custom#patch_filetype(['c', 'cpp'], 'sourceOptions', {
 call ddc#custom#patch_filetype('markdown', 'sourceParams', {
       \ 'around': {'maxSize': 100},
       \ })
-
-" Org Mode
-# lua << EOF
-# require('orgmode').setup({
-  # org_agenda_files = '~/orgfiles/**/*',
-  # org_default_notes_file = '~/orgfiles/refile.org',
-# })
-# EOF
 
 
 " Mappings
