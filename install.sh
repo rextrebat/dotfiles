@@ -138,7 +138,7 @@ install_dependencies() {
                     sudo apt-get install -y \
                         curl wget git zsh tmux neovim \
                         build-essential python3-pip nodejs npm \
-                        fd-find ripgrep bat exa fzf \
+                        fd-find ripgrep bat fzf \
                         fonts-jetbrains-mono \
                         i3 i3status polybar rofi \
                         xclip xsel
@@ -147,7 +147,7 @@ install_dependencies() {
                     sudo pacman -Sy --noconfirm \
                         curl wget git zsh tmux neovim \
                         base-devel python-pip nodejs npm \
-                        fd ripgrep bat exa fzf \
+                        fd ripgrep bat fzf \
                         ttf-jetbrains-mono \
                         i3-wm i3status polybar rofi \
                         xclip xsel
@@ -156,7 +156,7 @@ install_dependencies() {
                     sudo yum install -y \
                         curl wget git zsh tmux neovim \
                         gcc gcc-c++ make python3-pip nodejs npm \
-                        fd-find ripgrep bat exa fzf \
+                        fd-find ripgrep bat fzf \
                         i3 polybar rofi \
                         xclip xsel
                     ;;
@@ -171,7 +171,7 @@ install_dependencies() {
             brew install \
                 curl wget git zsh tmux neovim \
                 python3 node npm \
-                fd ripgrep bat exa fzf \
+                fd ripgrep bat fzf \
                 font-jetbrains-mono
             ;;
     esac
@@ -202,8 +202,12 @@ link_dotfile() {
 install_dotfiles() {
     log "Installing dotfiles..."
     
-    # Shell configurations
-    link_dotfile "_zshrc" "$HOME/.zshrc"
+    # Shell configurations (use modern zsh if available)
+    if [[ -f "$DOTFILES_DIR/_zshrc.modern" ]]; then
+        link_dotfile "_zshrc.modern" "$HOME/.zshrc"
+    else
+        link_dotfile "_zshrc" "$HOME/.zshrc"
+    fi
     link_dotfile "_bashrc" "$HOME/.bashrc"
     link_dotfile "_profile" "$HOME/.profile"
     link_dotfile "_inputrc" "$HOME/.inputrc"
@@ -245,40 +249,82 @@ install_dotfiles() {
 }
 
 setup_shell() {
-    log "Setting up shell environment..."
+    log "Setting up modern shell environment..."
     
-    # Install Oh My Zsh if not present
-    if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-        log "Installing Oh My Zsh..."
-        sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    # Install Starship prompt
+    if ! command -v starship >/dev/null 2>&1; then
+        log "Installing Starship prompt..."
+        case "$OS" in
+            "linux")
+                curl -sS https://starship.rs/install.sh | sh -s -- --yes
+                ;;
+            "macos")
+                brew install starship
+                ;;
+        esac
     fi
     
-    # Install Powerlevel10k theme
-    if [[ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ]]; then
-        log "Installing Powerlevel10k theme..."
-        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
-            "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
+    # Install zoxide (modern cd replacement)
+    if ! command -v zoxide >/dev/null 2>&1; then
+        log "Installing zoxide..."
+        case "$OS" in
+            "linux")
+                curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
+                ;;
+            "macos")
+                brew install zoxide
+                ;;
+        esac
     fi
     
-    # Install useful zsh plugins
-    local plugins_dir="$HOME/.oh-my-zsh/custom/plugins"
-    
-    if [[ ! -d "$plugins_dir/zsh-autosuggestions" ]]; then
-        git clone https://github.com/zsh-users/zsh-autosuggestions \
-            "$plugins_dir/zsh-autosuggestions"
+    # Install atuin (modern shell history)
+    if ! command -v atuin >/dev/null 2>&1; then
+        log "Installing atuin..."
+        case "$OS" in
+            "linux")
+                curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
+                ;;
+            "macos")
+                brew install atuin
+                ;;
+        esac
     fi
     
-    if [[ ! -d "$plugins_dir/zsh-syntax-highlighting" ]]; then
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
-            "$plugins_dir/zsh-syntax-highlighting"
+    # Install modern CLI tools if not present
+    case "$OS" in
+        "linux")
+            case "$DISTRO" in
+                "debian")
+                    # Install additional modern tools
+                    if ! command -v eza >/dev/null 2>&1; then
+                        log "Installing eza (modern ls replacement)..."
+                        wget -c https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz -O - | tar xz -C /tmp
+                        sudo mv /tmp/eza /usr/local/bin/
+                    fi
+                    ;;
+            esac
+            ;;
+        "macos")
+            # Modern tools via Homebrew
+            local tools=("eza" "zoxide" "atuin" "starship")
+            for tool in "${tools[@]}"; do
+                if ! command -v "$tool" >/dev/null 2>&1; then
+                    brew install "$tool"
+                fi
+            done
+            ;;
+    esac
+    
+    # Modern zsh configuration already linked in install_dotfiles()
+    
+    # Install FZF if not present
+    if [[ ! -d "$HOME/.fzf" ]]; then
+        log "Installing FZF..."
+        git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
+        "$HOME/.fzf/install" --all --no-bash --no-fish
     fi
     
-    if [[ ! -d "$plugins_dir/fzf-tab" ]]; then
-        git clone https://github.com/Aloxaf/fzf-tab \
-            "$plugins_dir/fzf-tab"
-    fi
-    
-    success "Shell environment setup complete"
+    success "Modern shell environment setup complete"
 }
 
 setup_tmux() {
@@ -382,7 +428,8 @@ main() {
     info "This installer will:"
     echo "  • Install system dependencies"
     echo "  • Create symbolic links for all dotfiles"
-    echo "  • Set up zsh with Oh My Zsh and modern plugins"
+    echo "  • Set up modern zsh with Starship prompt, Zinit and plugins"
+    echo "  • Install modern CLI tools (eza, zoxide, atuin, starship)"
     echo "  • Configure tmux with plugin manager"
     echo "  • Install fonts and themes"
     echo
@@ -430,9 +477,10 @@ main() {
     echo
     info "Next steps:"
     echo "  1. Restart your terminal or run: source ~/.zshrc"
-    echo "  2. Run tmux and press Ctrl-a + I to install tmux plugins"
-    echo "  3. Open nvim and run :Lazy sync to install plugins"
-    echo "  4. For i3: restart i3 or reload configuration"
+    echo "  2. Zinit will auto-install plugins on first zsh launch"
+    echo "  3. Run tmux and press Ctrl-a + I to install tmux plugins"
+    echo "  4. Open nvim and run :Lazy sync to install plugins"
+    echo "  5. For i3: restart i3 or reload configuration"
     echo
     info "Backup files are stored in: $BACKUP_DIR"
     info "Installation log: $LOG_FILE"
