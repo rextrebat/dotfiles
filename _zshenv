@@ -1,50 +1,88 @@
-# Customize to your needs...
-# specific exports for /opt/software/
-#
-# Titanium Studio
-if [ -d "/opt/software/Titanium_Studio" ]; then
-    export MOZILLA_FIVE_HOME=/usr/lib/mozilla
-    export UBUNTU_MENUPROXY=0
-    export PATH=$PATH:/opt/software/Titanium_Studio
+# Modern environment configuration
+
+# XDG Base Directory specification
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_STATE_HOME="$HOME/.local/state"
+
+# Editor and pager
+export EDITOR="nvim"
+export VISUAL="nvim"
+export PAGER="less"
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+# Language settings
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+
+# Path configuration (add to beginning for priority)
+typeset -U path  # Keep unique entries only
+path=(
+    "$HOME/.local/bin"
+    "$HOME/bin"
+    "/usr/local/bin"
+    $path
+)
+
+# Go configuration
+if command -v go >/dev/null 2>&1; then
+    export GOPATH="$HOME/go"
+    export GOBIN="$GOPATH/bin"
+    path=("$GOBIN" $path)
 fi
 
-# Android - adt
-if [ -d "/opt/software/adt" ]; then
-    export PATH=$PATH:/opt/software/adt/sdk/tools
-    export PATH=$PATH:/opt/software/adt/sdk/platform-tools
-fi
-# end specific exports for /opt/software/
-
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" ]]
-
-if [ -d "$HOME/anaconda2" ]; then
-    export PATH="$HOME/anaconda2/bin:$PATH"
+# Rust configuration
+if [ -d "$HOME/.cargo" ]; then
+    path=("$HOME/.cargo/bin" $path)
 fi
 
-# set GOPATH if the workspace is created
-if [ -d "$HOME/workspace/gows" ]; then
-    export GOPATH="$HOME/workspace/gows"
-    export PATH=$PATH:$(go env GOPATH)/bin
+# Python configuration
+if [ -d "$HOME/.pyenv" ]; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    path=("$PYENV_ROOT/bin" $path)
+    eval "$(pyenv init --path)"
 fi
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/kdasgupta/temp/google-cloud-sdk/path.zsh.inc' ]; then source '/home/kdasgupta/temp/google-cloud-sdk/path.zsh.inc'; fi
+# Node.js configuration
+export NVM_DIR="$HOME/.nvm"
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/kdasgupta/temp/google-cloud-sdk/completion.zsh.inc' ]; then source '/home/kdasgupta/temp/google-cloud-sdk/completion.zsh.inc'; fi
+# Google Cloud SDK (check common installation paths)
+for gcloud_path in \
+    "$HOME/google-cloud-sdk" \
+    "/opt/google-cloud-sdk" \
+    "/usr/local/google-cloud-sdk" \
+    "/snap/google-cloud-sdk/current"
+do
+    if [ -d "$gcloud_path" ]; then
+        path=("$gcloud_path/bin" $path)
+        break
+    fi
+done
 
-# Snap
+# Snap packages
 if [ -d "/snap/bin" ]; then
-    export PATH="/snap/bin:$PATH"
+    path=("/snap/bin" $path)
 fi
 
-# Pyenv
-export PATH="/home/kdasgupta/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-export PATH="/home/kdasgupta/.pyenv/shims:$PATH"
+# Starship prompt configuration
+export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 
-# Go
-export GOPATH=/home/kdasgupta/go
-export PATH=$GOPATH:$GOPATH/bin:$PATH
+# FZF configuration
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --ansi"
+
+# Less configuration
+export LESS="-R -M --shift 5"
+export LESSHISTFILE="-"
+
+# History configuration
+export HISTCONTROL="ignoreboth:erasedups"
+export HISTSIZE=50000
+export HISTFILESIZE=50000
+
+# Development tools
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
+
+# Clean up duplicates and export
+export PATH

@@ -1,0 +1,195 @@
+# Modern Zsh Configuration
+# Performance optimizations
+zmodload zsh/zprof  # Enable profiling (run `zprof` to see startup times)
+
+# Zinit plugin manager initialization
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+[ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
+[ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+source "${ZINIT_HOME}/zinit.zsh"
+
+# Load Starship prompt (fast, modern prompt)
+zinit ice as"command" from"gh-r" \
+          atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
+          atpull"%atclone" src"init.zsh"
+zinit load starship/starship
+
+# Essential plugins (loaded with turbo mode for faster startup)
+zinit wait lucid for \
+    atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
+        zdharma-continuum/fast-syntax-highlighting \
+    atload"!_zsh_autosuggest_start" \
+        zsh-users/zsh-autosuggestions \
+    blockf \
+        zsh-users/zsh-completions
+
+# Enhanced tab completion with fzf
+zinit wait lucid for \
+        Aloxaf/fzf-tab
+
+# Additional useful plugins
+zinit wait lucid for \
+    as"program" pick"bin/git-dsf" \
+        zdharma-continuum/zsh-diff-so-fancy \
+    as"program" atclone"rm -f src/auto/config.cache; ./configure" \
+        atpull"%atclone" make pick"src/vim" \
+        vim/vim \
+    atclone"dircolors -b LS_COLORS > clrs.zsh" \
+        atpull'%atclone' pick"clrs.zsh" nocompile'!' \
+        atload'zstyle ":completion:*" list-colors "${(s.:.)LS_COLORS}"' \
+        trapd00r/LS_COLORS
+
+# Modern command replacements (if available)
+zinit wait lucid as"program" from"gh-r" for \
+    atclone"./bat --print-completion=zsh > _bat" atpull"%atclone" \
+        sharkdp/bat \
+    atclone"./fd --print-completion=zsh > _fd" atpull"%atclone" \
+        sharkdp/fd \
+    atclone"./rg --generate complete-zsh > _rg" atpull"%atclone" \
+        BurntSushi/ripgrep \
+    atclone"./eza --generate=completions --shell=zsh > _eza" atpull"%atclone" \
+        eza-community/eza
+
+# Git utilities
+zinit wait lucid for \
+        wfxr/forgit \
+    as"program" \
+        paulirish/git-open
+
+# History configuration
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format
+setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits
+setopt SHARE_HISTORY             # Share history between all sessions
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history
+setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate
+setopt HIST_FIND_NO_DUPS         # Do not display a line previously found
+setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space
+setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry
+setopt HIST_VERIFY               # Don't execute immediately upon history expansion
+
+# Directory navigation
+setopt AUTO_CD                   # Auto change to a directory without typing cd
+setopt AUTO_PUSHD                # Push the old directory onto the stack on cd
+setopt PUSHD_IGNORE_DUPS         # Do not store duplicates in the stack
+setopt PUSHD_SILENT              # Do not print the directory stack after pushd or popd
+
+# Completion settings
+setopt COMPLETE_ALIASES          # Complete command line aliases
+setopt ALWAYS_TO_END             # Move cursor to the end of a completed word
+setopt PATH_DIRS                 # Perform path search even on command names with slashes
+setopt AUTO_MENU                 # Show completion menu on a successive tab press
+setopt AUTO_LIST                 # Automatically list choices on ambiguous completion
+setopt AUTO_PARAM_SLASH          # If completed parameter is a directory, add a trailing slash
+unsetopt MENU_COMPLETE           # Do not autoselect the first completion entry
+unsetopt FLOW_CONTROL            # Disable start/stop characters in shell editor
+
+# Modern aliases
+alias ls='eza --color=auto --group-directories-first'
+alias ll='eza -la --color=auto --group-directories-first'
+alias la='eza -a --color=auto --group-directories-first'
+alias tree='eza --tree --color=auto'
+alias cat='bat --paging=never'
+alias grep='rg'
+alias find='fd'
+alias top='htop'
+alias vim='nvim'
+alias vi='nvim'
+
+# Git aliases
+alias g='git'
+alias ga='git add'
+alias gc='git commit'
+alias gco='git checkout'
+alias gd='git diff'
+alias gl='git log --oneline --graph --decorate'
+alias gp='git push'
+alias gpl='git pull'
+alias gs='git status'
+alias gst='git stash'
+
+# Directory shortcuts
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ~='cd ~'
+alias -- -='cd -'
+
+# Useful functions
+mkcd() {
+    mkdir -p "$@" && cd "$_"
+}
+
+extract() {
+    if [ -f $1 ]; then
+        case $1 in
+            *.tar.bz2)   tar xjf $1     ;;
+            *.tar.gz)    tar xzf $1     ;;
+            *.bz2)       bunzip2 $1     ;;
+            *.rar)       unrar e $1     ;;
+            *.gz)        gunzip $1      ;;
+            *.tar)       tar xf $1      ;;
+            *.tbz2)      tar xjf $1     ;;
+            *.tgz)       tar xzf $1     ;;
+            *.zip)       unzip $1       ;;
+            *.Z)         uncompress $1  ;;
+            *.7z)        7z x $1        ;;
+            *)     echo "'$1' cannot be extracted via extract()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# FZF configuration
+if [ -f ~/.fzf.zsh ]; then
+    source ~/.fzf.zsh
+    
+    # Use fd for FZF
+    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+    
+    # FZF colors to match terminal
+    export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+fi
+
+# fzf-tab configuration
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza -1 --color=always $realpath'
+
+# Load environment variables
+[ -f ~/.zshenv ] && source ~/.zshenv
+
+# Atuin shell history (keep this - it's modern!)
+if command -v atuin > /dev/null 2>&1; then
+    . "$HOME/.atuin/bin/env"
+    eval "$(atuin init zsh)"
+fi
+
+# NVM (Node Version Manager)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Python development
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+export EDITOR=nvim
+export VISUAL=nvim
+export PAGER=less
+
+# Add local bin to PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+# Zoxide (modern cd replacement)
+if command -v zoxide > /dev/null 2>&1; then
+    eval "$(zoxide init zsh)"
+    alias cd='z'
+fi
+
+# Load local customizations if they exist
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
