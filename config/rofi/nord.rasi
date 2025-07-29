@@ -1,0 +1,179 @@
+/*
+ * Modern Nordic Rofi Theme
+ * Based on Nord color palette
+ */
+
+* {
+    /* Nord color palette */
+    nord0: #2E3440;
+    nord1: #3B4252;
+    nord2: #434C5E;
+    nord3: #4C566A;
+    nord4: #D8DEE9;
+    nord5: #E5E9F0;
+    nord6: #ECEFF4;
+    nord7: #8FBCBB;
+    nord8: #88C0D0;
+    nord9: #81A1C1;
+    nord10: #5E81AC;
+    nord11: #BF616A;
+    nord12: #D08770;
+    nord13: #EBCB8B;
+    nord14: #A3BE8C;
+    nord15: #B48EAD;
+
+    /* Global properties */
+    background-color: transparent;
+    text-color: @nord4;
+    
+    accent: @nord8;
+    urgent: @nord11;
+    selected: @nord10;
+}
+
+window {
+    background-color: @nord0;
+    border: 2px;
+    border-color: @accent;
+    border-radius: 8px;
+    width: 600px;
+    location: center;
+    anchor: center;
+}
+
+mainbox {
+    background-color: transparent;
+    children: [inputbar, listview];
+    spacing: 10px;
+    padding: 10px;
+}
+
+inputbar {
+    background-color: @nord1;
+    text-color: @nord4;
+    border-radius: 4px;
+    padding: 8px 12px;
+    children: [prompt, textbox-prompt-colon, entry];
+}
+
+prompt {
+    background-color: transparent;
+    text-color: @accent;
+    font: "Inter Bold 11";
+}
+
+textbox-prompt-colon {
+    background-color: transparent;
+    text-color: @accent;
+    expand: false;
+    str: ":";
+    margin: 0px 5px 0px 0px;
+}
+
+entry {
+    background-color: transparent;
+    text-color: @nord4;
+    placeholder-color: @nord3;
+    placeholder: "Search...";
+}
+
+listview {
+    background-color: transparent;
+    columns: 1;
+    lines: 8;
+    spacing: 2px;
+    cycle: true;
+    dynamic: true;
+    layout: vertical;
+}
+
+element {
+    background-color: transparent;
+    text-color: @nord4;
+    orientation: horizontal;
+    border-radius: 4px;
+    padding: 8px 12px;
+}
+
+element-icon {
+    background-color: transparent;
+    size: 24px;
+    border: 0px;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    expand: true;
+    horizontal-align: 0;
+    vertical-align: 0.5;
+    margin: 0px 2px 0px 8px;
+}
+
+element normal.urgent,
+element alternate.urgent {
+    background-color: @urgent;
+    text-color: @nord6;
+}
+
+element normal.active,
+element alternate.active {
+    background-color: @selected;
+    text-color: @nord6;
+}
+
+element selected {
+    background-color: @accent;
+    text-color: @nord0;
+}
+
+element selected.urgent {
+    background-color: @urgent;
+    text-color: @nord6;
+}
+
+element selected.active {
+    background-color: @selected;
+    text-color: @nord6;
+}
+
+/* Scrollbar */
+scrollbar {
+    width: 4px;
+    border: 0px;
+    handle-color: @accent;
+    handle-width: 4px;
+    padding: 0px;
+}
+
+/* Message */
+message {
+    background-color: @nord1;
+    border-radius: 4px;
+    padding: 8px;
+    margin: 0px 0px 8px;
+}
+
+textbox {
+    background-color: transparent;
+    text-color: @nord4;
+}
+
+/* Mode switcher */
+mode-switcher {
+    background-color: @nord1;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+button {
+    background-color: transparent;
+    text-color: @nord4;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+button selected {
+    background-color: @accent;
+    text-color: @nord0;
+}

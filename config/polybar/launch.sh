@@ -1,16 +1,20 @@
-#!/bin/sh
+#!/usr/bin/env bash
+
+# Modern Polybar Launch Script
 
 # Terminate already running bar instances
 killall -q polybar
 
-for m in $(polybar --list-monitors | cut -d":" -f1);
-do
-    MONITOR=$m polybar --reload top &
-done
+# Wait until the processes have been shut down
+while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
 
-for m in $(polybar --list-monitors | cut -d":" -f1);
-do
-    MONITOR=$m polybar --reload bottom &
-done
+# Launch polybar for all monitors
+if type "xrandr"; then
+  for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
+    MONITOR=$m polybar --reload main &
+  done
+else
+  polybar --reload main &
+fi
 
-echo "Bars launched..."
+echo "Modern polybar launched with Nordic theme"
