@@ -1,0 +1,267 @@
+# =====================================================
+# EditorConfig Configuration
+# Consistent coding styles across editors and IDEs
+# =====================================================
+
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# =====================================================
+# Default Settings for All Files
+# =====================================================
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# =====================================================
+# Language-Specific Settings
+# =====================================================
+
+# Web Technologies
+[*.{html,htm,xml,xhtml}]
+indent_size = 2
+
+[*.{css,scss,sass,less}]
+indent_size = 2
+
+[*.{js,jsx,ts,tsx,vue,svelte}]
+indent_size = 2
+
+[*.json]
+indent_size = 2
+
+# Configuration Files
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.toml]
+indent_size = 2
+
+[*.ini]
+indent_size = 2
+
+# Shell Scripts
+[*.{sh,bash,zsh,fish}]
+indent_size = 2
+end_of_line = lf
+
+# Python
+[*.py]
+indent_size = 4
+max_line_length = 88
+trim_trailing_whitespace = true
+
+# Python specific files
+[*.{pyi,pyx}]
+indent_size = 4
+
+# Requirements files
+[requirements*.txt]
+indent_size = 4
+
+# Java
+[*.{java,kt,kts}]
+indent_size = 4
+
+# C/C++
+[*.{c,h,cpp,hpp,cc,hh,cxx,hxx}]
+indent_size = 4
+
+# C#
+[*.{cs,csx}]
+indent_size = 4
+
+# Go
+[*.go]
+indent_style = tab
+indent_size = 4
+
+# Rust
+[*.rs]
+indent_size = 4
+max_line_length = 100
+
+# Ruby
+[*.{rb,rake}]
+indent_size = 2
+
+[Gemfile]
+indent_size = 2
+
+# PHP
+[*.php]
+indent_size = 4
+
+# Swift
+[*.swift]
+indent_size = 4
+
+# Objective-C
+[*.{m,mm}]
+indent_size = 4
+
+# =====================================================
+# Documentation
+# =====================================================
+
+# Markdown
+[*.{md,markdown}]
+indent_size = 2
+trim_trailing_whitespace = false
+
+# reStructuredText
+[*.rst]
+indent_size = 3
+
+# LaTeX
+[*.{tex,latex}]
+indent_size = 2
+
+# =====================================================
+# Configuration Files
+# =====================================================
+
+# Makefile
+[{Makefile,makefile,*.mk}]
+indent_style = tab
+indent_size = 4
+
+# Docker
+[{Dockerfile,Dockerfile.*,*.dockerfile}]
+indent_size = 2
+
+# GitHub Actions
+[.github/workflows/*.{yml,yaml}]
+indent_size = 2
+
+# Vim
+[*.vim]
+indent_size = 2
+
+# =====================================================
+# Data Files
+# =====================================================
+
+# CSV
+[*.csv]
+trim_trailing_whitespace = false
+
+# TSV
+[*.tsv]
+indent_style = tab
+trim_trailing_whitespace = false
+
+# SQL
+[*.sql]
+indent_size = 2
+max_line_length = 120
+
+# =====================================================
+# Build and Package Files
+# =====================================================
+
+# npm/yarn
+[package.json]
+indent_size = 2
+
+[package-lock.json]
+indent_size = 2
+insert_final_newline = false
+
+[yarn.lock]
+indent_size = 2
+insert_final_newline = false
+
+# Composer (PHP)
+[composer.json]
+indent_size = 4
+
+# Cargo (Rust)
+[Cargo.toml]
+indent_size = 2
+
+[Cargo.lock]
+indent_size = 2
+insert_final_newline = false
+
+# Maven (Java)
+[pom.xml]
+indent_size = 2
+
+# Gradle
+[*.{gradle,gradle.kts}]
+indent_size = 4
+
+# =====================================================
+# IDE and Editor Specific
+# =====================================================
+
+# VS Code settings
+[*.code-workspace]
+indent_size = 2
+
+# Sublime Text
+[*.sublime-*]
+indent_size = 2
+
+# =====================================================
+# Special Cases
+# =====================================================
+
+# Git commit messages
+[COMMIT_EDITMSG]
+max_line_length = 72
+
+# Git config
+[.gitconfig]
+indent_style = tab
+
+# License files
+[{LICENSE,COPYING,COPYRIGHT}]
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Changelog
+[{CHANGELOG,CHANGELOG.*,HISTORY,HISTORY.*}]
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# README files
+[{README,README.*}]
+insert_final_newline = true
+trim_trailing_whitespace = false
+
+# =====================================================
+# Binary and Generated Files
+# =====================================================
+
+# Images
+[*.{png,jpg,jpeg,gif,svg,ico,webp}]
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+# Fonts
+[*.{ttf,otf,woff,woff2,eot}]
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+# Archives
+[*.{zip,tar,gz,bz2,xz,7z,rar}]
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+# Generated files (minified, compiled, etc.)
+[*.min.*]
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+# Node modules and vendor directories
+[{node_modules,vendor}/**]
+insert_final_newline = unset
+trim_trailing_whitespace = unset
