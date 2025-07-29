@@ -138,17 +138,22 @@ install_dependencies() {
                     sudo apt-get install -y \
                         curl wget git zsh tmux neovim \
                         build-essential python3-pip nodejs npm \
-                        fd-find ripgrep bat fzf \
-                        fonts-jetbrains-mono \
+                        fd-find ripgrep bat fzf htop ncdu \
+                        fonts-jetbrains-mono fonts-inter \
+                        git-delta \
                         i3 i3status polybar rofi \
                         xclip xsel
+                    
+                    # Create fd symlink for Debian compatibility
+                    sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true
                     ;;
                 "arch")
                     sudo pacman -Sy --noconfirm \
                         curl wget git zsh tmux neovim \
                         base-devel python-pip nodejs npm \
-                        fd ripgrep bat fzf \
-                        ttf-jetbrains-mono \
+                        fd ripgrep bat fzf htop ncdu \
+                        ttf-jetbrains-mono inter-font \
+                        git-delta \
                         i3-wm i3status polybar rofi \
                         xclip xsel
                     ;;
@@ -156,7 +161,8 @@ install_dependencies() {
                     sudo yum install -y \
                         curl wget git zsh tmux neovim \
                         gcc gcc-c++ make python3-pip nodejs npm \
-                        fd-find ripgrep bat fzf \
+                        fd-find ripgrep bat fzf htop ncdu \
+                        git-delta \
                         i3 polybar rofi \
                         xclip xsel
                     ;;
@@ -171,8 +177,9 @@ install_dependencies() {
             brew install \
                 curl wget git zsh tmux neovim \
                 python3 node npm \
-                fd ripgrep bat fzf \
-                font-jetbrains-mono
+                fd ripgrep bat fzf htop ncdu \
+                git-delta \
+                font-jetbrains-mono font-inter
             ;;
     esac
     
@@ -225,6 +232,12 @@ install_dotfiles() {
     # Editor configuration
     link_dotfile ".editorconfig" "$HOME/.editorconfig"
     
+    # Starship configuration if it exists
+    if [[ -f "$DOTFILES_DIR/starship.toml" ]]; then
+        mkdir -p "$HOME/.config"
+        link_dotfile "starship.toml" "$HOME/.config/starship.toml"
+    fi
+    
     # Neovim configuration
     if [[ -d "$DOTFILES_DIR/config/nvim" ]]; then
         link_dotfile "config/nvim" "$HOME/.config/nvim"
@@ -250,6 +263,14 @@ install_dotfiles() {
 
 setup_shell() {
     log "Setting up modern shell environment..."
+    
+    # Install Zinit plugin manager (critical for modern zsh config)
+    local zinit_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+    if [[ ! -d "$zinit_dir" ]]; then
+        log "Installing Zinit plugin manager..."
+        mkdir -p "$(dirname "$zinit_dir")"
+        git clone https://github.com/zdharma-continuum/zinit.git "$zinit_dir"
+    fi
     
     # Install Starship prompt
     if ! command -v starship >/dev/null 2>&1; then
@@ -324,6 +345,18 @@ setup_shell() {
         "$HOME/.fzf/install" --all --no-bash --no-fish
     fi
     
+    # Install NVM (Node Version Manager) for modern zsh config
+    if [[ ! -d "$HOME/.nvm" ]]; then
+        log "Installing NVM..."
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+    fi
+    
+    # Install Python rich library for enhanced REPL
+    if command -v pip3 >/dev/null 2>&1; then
+        log "Installing Python rich library..."
+        pip3 install --user rich 2>/dev/null || true
+    fi
+    
     success "Modern shell environment setup complete"
 }
 
@@ -379,6 +412,29 @@ post_install_setup() {
     # Make scripts executable
     if [[ -d "$HOME/.config/polybar" ]]; then
         find "$HOME/.config/polybar" -name "*.sh" -exec chmod +x {} \;
+    fi
+    
+    if [[ -d "$HOME/.config/i3" ]]; then
+        find "$HOME/.config/i3" -name "*.sh" -exec chmod +x {} \;
+    fi
+    
+    # Starship configuration already linked in install_dotfiles()
+    
+    # Verify critical dependencies
+    log "Verifying installation..."
+    local missing_deps=()
+    
+    # Check for critical commands
+    local critical_commands=("git" "zsh" "tmux" "nvim" "starship" "fd" "rg" "bat")
+    for cmd in "${critical_commands[@]}"; do
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            missing_deps+=("$cmd")
+        fi
+    done
+    
+    if [[ ${#missing_deps[@]} -gt 0 ]]; then
+        warn "Missing critical dependencies: ${missing_deps[*]}"
+        warn "Some features may not work properly"
     fi
     
     success "Post-installation setup complete"
@@ -476,11 +532,13 @@ main() {
     success "Modern dotfiles installation completed successfully!"
     echo
     info "Next steps:"
-    echo "  1. Restart your terminal or run: source ~/.zshrc"
-    echo "  2. Zinit will auto-install plugins on first zsh launch"
-    echo "  3. Run tmux and press Ctrl-a + I to install tmux plugins"
+    echo "  1. Restart your terminal or run: exec zsh"
+    echo "  2. Zinit will auto-install zsh plugins on first launch"
+    echo "  3. Run tmux and press Ctrl-a + I to install tmux plugins"  
     echo "  4. Open nvim and run :Lazy sync to install plugins"
-    echo "  5. For i3: restart i3 or reload configuration"
+    echo "  5. For i3: restart i3 or reload configuration (Super+Shift+R)"
+    echo "  6. Install Node.js LTS: nvm install --lts && nvm use --lts"
+    echo "  7. Set zsh as default shell: chsh -s \$(which zsh) (logout required)"
     echo
     info "Backup files are stored in: $BACKUP_DIR"
     info "Installation log: $LOG_FILE"
