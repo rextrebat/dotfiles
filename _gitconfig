@@ -1,37 +1,231 @@
+# =====================================================
+# Modern Git Configuration
+# =====================================================
+
 [user]
-    name = Kingshuk Dasgupta
-    email = rextrebat@gmail.com
-    signingkey = 53F9969E
-
-[color]
-    diff = auto
-    status = auto
-    branch = auto
-    ui = auto
-
-[push]
-    default = matching
+	name = Kingshuk Dasgupta
+	email = kingshuk.dasgupta@gmail.com
 
 [core]
-    editor = vim
-    pager = less -R
+	editor = nvim
+	autocrlf = input
+	safecrlf = true
+	excludesfile = ~/.gitignore_global
+	pager = delta
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	light = false
+	side-by-side = true
+	line-numbers = true
+	syntax-theme = Nord
+	file-style = bold yellow ul
+	file-decoration-style = none
+	hunk-header-decoration-style = cyan box ul
+
+[merge]
+	conflictstyle = diff3
+	tool = nvim
+
+[mergetool]
+	keepBackup = false
+
+[mergetool "nvim"]
+	cmd = nvim -f -c \"Gdiffsplit!\" \"$MERGED\"
+
+[diff]
+	colorMoved = default
+	tool = nvim
+
+[difftool]
+	prompt = false
+
+[difftool "nvim"]
+	cmd = nvim -d \"$LOCAL\" \"$REMOTE\"
+
+[push]
+	default = simple
+	autoSetupRemote = true
+
+[pull]
+	rebase = true
+
+[rebase]
+	autoStash = true
+
+[fetch]
+	prune = true
+
+[init]
+	defaultBranch = main
+
+[branch]
+	autosetupmerge = true
+	autosetuprebase = always
+
+[color]
+	ui = auto
+	branch = auto
+	diff = auto
+	interactive = auto
+	status = auto
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+# =====================================================
+# Modern Git Aliases
+# =====================================================
 
 [alias]
-    diverges = !bash -c 'diff -u <(git rev-list --first-parent "${1}") <(git rev-list --first-parent "${2:-HEAD}") | sed -ne \"s/^ //p\" | head -1' -
-    st = status
-    ci = commit
-    br = branch
-    co = checkout
-    df = diff
-	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
-    up = !sh -c 'git pull --rebase --prune && git log --pretty=format:\"%Cred%ae %Creset- %C(yellow)%s %Creset(%ar)\" HEAD@{1}..'
-    lol = log --graph --decorate --pretty=oneline --abbrev-commit
-    lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
-    ls = ls-files
+	# Basic shortcuts
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
+	dt = difftool
+	mt = mergetool
+
+	# Status and info
+	s = status --short --branch
+	ss = status
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	visual = !gitk
+
+	# Commit aliases
+	c = commit
+	cm = commit -m
+	ca = commit -a
+	cam = commit -am
+	amend = commit --amend
+	amendn = commit --amend --no-edit
+
+	# Log aliases
+	l = log --oneline
+	ll = log --oneline --decorate --graph
+	lll = log --oneline --decorate --graph --all
+	tree = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
+	hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+
+	# Diff aliases
+	d = diff
+	dc = diff --cached
+	ds = diff --stat
+	dn = diff --name-only
+
+	# Branch management
+	bra = branch -ra
+	brd = branch -d
+	brD = branch -D
+	bm = branch -m
+	co-pr = !sh -c 'git fetch origin pull/$1/head:pr-$1 && git checkout pr-$1' -
+
+	# Stash operations
+	sl = stash list
+	sa = stash apply
+	ss = stash save
+	sp = stash pop
+
+	# Remote operations
+	rao = remote add origin
+	rau = remote add upstream
+	rv = remote -v
+
+	# Reset aliases
+	r = reset
+	r1 = reset HEAD^
+	r2 = reset HEAD^^
+	rh = reset --hard
+	rh1 = reset HEAD^ --hard
+	rh2 = reset HEAD^^ --hard
+
+	# Advanced operations
+	cp = cherry-pick
+	cl = clean -f
+	cleanall = clean -fd
+	
+	# Find text in history
+	find = "!git log --pretty=\"format:%Cgreen%H %Cblue%s\" --name-status --grep"
+	
+	# Show files ignored by .gitignore
+	ignored = ls-files -o -i --exclude-standard
+	
+	# Undo last commit but keep changes
+	undo = reset --soft HEAD^
+	
+	# Current branch name
+	current-branch = rev-parse --abbrev-ref HEAD
+	
+	# Push current branch
+	pc = !git push origin $(git current-branch)
+	
+	# Create and switch to new branch
+	nb = checkout -b
+	
+	# Delete merged branches
+	dm = "!git branch --merged | grep -v '\\*\\|master\\|main' | xargs -n 1 git branch -d"
+	
+	# Contribution stats
+	contributors = shortlog --summary --numbered
+	
+	# File history
+	filelog = log -u
+	
+	# Show tags
+	tags = tag -l
+	
+	# Prune remote branches
+	prune-all = !git remote | xargs -n 1 git remote prune
+
+# =====================================================
+# URL Shortcuts
+# =====================================================
+
+[url "git@github.com:"]
+	insteadOf = "gh:"
+	pushInsteadOf = "github:"
+	pushInsteadOf = "git://github.com/"
+
+[url "git://github.com/"]
+	insteadOf = "github:"
+
+[url "git@gist.github.com:"]
+	insteadOf = "gst:"
+	pushInsteadOf = "gist:"
+	pushInsteadOf = "git://gist.github.com/"
+
+[url "git://gist.github.com/"]
+	insteadOf = "gist:"
+
+# =====================================================
+# Additional Settings
+# =====================================================
+
+[help]
+	autocorrect = 1
 
 [credential]
-	helper = 
-	helper = /usr/local/share/gcm-core/git-credential-manager-core
-	credentialStore = gpg
-[credential "https://dev.azure.com"]
-	useHttpPath = true
+	helper = cache --timeout=3600
+
+[rerere]
+	enabled = true
+
+[log]
+	abbrevCommit = true

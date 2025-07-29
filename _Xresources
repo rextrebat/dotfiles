@@ -1,56 +1,214 @@
-#define S_base03        #002b36
-#define S_base02        #073642
-#define S_base01        #586e75
-#define S_base00        #657b83
-#define S_base0         #839496
-#define S_base1         #93a1a1
-#define S_base2         #eee8d5
-#define S_base3         #fdf6e3
+! =====================================================
+! Modern X11 Resources Configuration
+! =====================================================
 
-*background:            S_base03
-*foreground:            S_base0
-*fadeColor:             S_base03
-*cursorColor:           S_base1
-*pointerColorBackground:S_base01
-*pointerColorForeground:S_base1
+! DPI and Font Settings
+! =====================================================
+Xft.dpi: 96
+Xft.antialias: true
+Xft.hinting: true
+Xft.hintstyle: hintslight
+Xft.rgba: rgb
+Xft.lcdfilter: lcddefault
 
-#define S_yellow        #b58900
-#define S_orange        #cb4b16
-#define S_red           #dc322f
-#define S_magenta       #d33682
-#define S_violet        #6c71c4
-#define S_blue          #268bd2
-#define S_cyan          #2aa198
-#define S_green         #859900
+! Cursor Theme
+! =====================================================
+Xcursor.theme: Adwaita
+Xcursor.size: 16
 
-!! black dark/light
-*color0:                S_base02
-*color8:                S_base03
+! =====================================================
+! Terminal Colors - Nordic Theme
+! =====================================================
 
-!! red dark/light
-*color1:                S_red
-*color9:                S_orange
+! Nord Color Palette
+#define nord0  #2E3440
+#define nord1  #3B4252
+#define nord2  #434C5E
+#define nord3  #4C566A
+#define nord4  #D8DEE9
+#define nord5  #E5E9F0
+#define nord6  #ECEFF4
+#define nord7  #8FBCBB
+#define nord8  #88C0D0
+#define nord9  #81A1C1
+#define nord10 #5E81AC
+#define nord11 #BF616A
+#define nord12 #D08770
+#define nord13 #EBCB8B
+#define nord14 #A3BE8C
+#define nord15 #B48EAD
 
-!! green dark/light
-*color2:                S_green
-*color10:               S_base01
+! XTerm Configuration
+! =====================================================
+XTerm*termName: xterm-256color
+XTerm*locale: true
+XTerm*utf8: true
+XTerm*utf8Title: true
+XTerm*dynamicColors: true
+XTerm*eightBitInput: true
+XTerm*saveLines: 10000
+XTerm*scrollKey: true
+XTerm*scrollTtyOutput: false
+XTerm*scrollBar: false
+XTerm*rightScrollBar: false
+XTerm*jumpScroll: true
+XTerm*multiScroll: true
+XTerm*toolBar: false
 
-!! yellow dark/light
-*color3:                S_yellow
-*color11:               S_base00
+! XTerm Fonts
+XTerm*faceName: JetBrains Mono:style=Regular:antialias=true
+XTerm*faceSize: 11
+XTerm*renderFont: true
+XTerm*font: -*-fixed-medium-r-*-*-18-*-*-*-*-*-*-*
+XTerm*boldFont: -*-fixed-bold-r-*-*-18-*-*-*-*-*-*-*
 
-!! blue dark/light
-*color4:                S_blue
-*color12:               S_base0
+! XTerm Colors (Nordic)
+XTerm*foreground: nord4
+XTerm*background: nord0
+XTerm*cursorColor: nord4
+XTerm*highlightSelection: true
+XTerm*highlightColor: nord2
 
-!! magenta dark/light
-*color5:                S_magenta
-*color13:               S_violet
+! Black + Dark Grey
+XTerm*color0: nord1
+XTerm*color8: nord3
 
-!! cyan dark/light
-*color6:                S_cyan
-*color14:               S_base1
+! Dark Red + Red
+XTerm*color1: nord11
+XTerm*color9: nord11
 
-!! white dark/light
-*color7:                S_base2
-*color15:               S_base3
+! Dark Green + Green  
+XTerm*color2: nord14
+XTerm*color10: nord14
+
+! Dark Yellow + Yellow
+XTerm*color3: nord13
+XTerm*color11: nord13
+
+! Dark Blue + Blue
+XTerm*color4: nord9
+XTerm*color12: nord9
+
+! Dark Magenta + Magenta
+XTerm*color5: nord15
+XTerm*color13: nord15
+
+! Dark Cyan + Cyan
+XTerm*color6: nord8
+XTerm*color14: nord7
+
+! Light Grey + White
+XTerm*color7: nord5
+XTerm*color15: nord6
+
+! URxvt Configuration
+! =====================================================
+URxvt.font: xft:JetBrains Mono:style=Regular:size=11:antialias=true:hinting=true
+URxvt.boldFont: xft:JetBrains Mono:style=Bold:size=11:antialias=true:hinting=true
+URxvt.italicFont: xft:JetBrains Mono:style=Italic:size=11:antialias=true:hinting=true
+URxvt.boldItalicFont: xft:JetBrains Mono:style=Bold Italic:size=11:antialias=true:hinting=true
+
+URxvt.depth: 32
+URxvt.buffered: true
+URxvt.saveLines: 10000
+URxvt.scrollBar: false
+URxvt.scrollTtyOutput: false
+URxvt.scrollWithBuffer: true
+URxvt.scrollTtyKeypress: true
+URxvt.urgentOnBell: true
+URxvt.visualBell: false
+URxvt.mapAlert: true
+
+! URxvt Colors (Nordic)
+URxvt.foreground: nord4
+URxvt.background: [95]nord0
+URxvt.cursorColor: nord4
+URxvt.highlightColor: nord2
+URxvt.highlightTextColor: nord6
+
+URxvt.color0: nord1
+URxvt.color1: nord11
+URxvt.color2: nord14
+URxvt.color3: nord13
+URxvt.color4: nord9
+URxvt.color5: nord15
+URxvt.color6: nord8
+URxvt.color7: nord5
+URxvt.color8: nord3
+URxvt.color9: nord11
+URxvt.color10: nord14
+URxvt.color11: nord13
+URxvt.color12: nord9
+URxvt.color13: nord15
+URxvt.color14: nord7
+URxvt.color15: nord6
+
+! URxvt Extensions
+URxvt.perl-ext-common: default,clipboard,url-select,keyboard-select,resize-font
+URxvt.clipboard.autocopy: true
+URxvt.clipboard.copycmd: xclip -i -selection clipboard
+URxvt.clipboard.pastecmd: xclip -o -selection clipboard
+URxvt.keysym.M-c: perl:clipboard:copy
+URxvt.keysym.M-v: perl:clipboard:paste
+URxvt.keysym.M-C-v: perl:clipboard:paste_escaped
+URxvt.keysym.M-Escape: perl:keyboard-select:activate
+URxvt.keysym.M-s: perl:keyboard-select:search
+URxvt.keysym.M-u: perl:url-select:select_next
+URxvt.url-select.launcher: firefox
+URxvt.url-select.underline: true
+
+! Rofi Configuration
+! =====================================================
+rofi.color-enabled: true
+rofi.color-window: nord0, nord8, nord8
+rofi.color-normal: nord0, nord4, nord1, nord8, nord0
+rofi.color-active: nord0, nord8, nord1, nord8, nord0
+rofi.color-urgent: nord0, nord11, nord1, nord11, nord0
+
+rofi.font: Inter 11
+rofi.padding: 20
+rofi.line-margin: 10
+rofi.separator-style: solid
+rofi.hide-scrollbar: true
+rofi.scrollbar-width: 0
+
+! =====================================================
+! Application Specific Settings
+! =====================================================
+
+! Emacs
+Emacs.font: JetBrains Mono-11
+Emacs.toolBar: off
+Emacs.menuBar: off
+Emacs.verticalScrollBars: off
+Emacs.cursorBlink: off
+
+! GVim
+Vim*font: JetBrains Mono 11
+Vim*guifont: JetBrains Mono:h11
+
+! Firefox
+Firefox*font: Inter-11
+
+! GNOME Terminal (fallback)
+*.font: JetBrains Mono 11
+
+! =====================================================
+! HiDPI Support
+! =====================================================
+! Uncomment these for HiDPI displays
+! Xft.dpi: 144
+! Xcursor.size: 24
+! XTerm*faceSize: 14
+! URxvt.font: xft:JetBrains Mono:style=Regular:size=14
+
+! =====================================================
+! Accessibility
+! =====================================================
+! High contrast mode
+! URxvt.background: #000000
+! URxvt.foreground: #FFFFFF
+
+! Large text mode  
+! XTerm*faceSize: 16
+! URxvt.font: xft:JetBrains Mono:style=Regular:size=16

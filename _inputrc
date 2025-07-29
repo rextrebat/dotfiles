@@ -1,37 +1,238 @@
-set editing-mode vi
+# =====================================================
+# Modern Readline Configuration
+# Enhanced command-line editing experience
+# =====================================================
 
-# Adds punctuation as word delimiters
-set bind-tty-special-chars off
+# Basic Settings
+# =====================================================
+$include /etc/inputrc
 
-# Completion Options
-set page-completions on
-set completion-ignore-case on
-set completion-query-items 200
-set show-all-if-ambiguous on
-set show-all-if-unmodified on
-set visible-stats on
+# Use the text that has already been typed as the prefix for searching
+"\e[A": history-search-backward
+"\e[B": history-search-forward
 
-# Useful stuff for UTF-8
+# Enable 8-bit input/output
 set meta-flag on
 set input-meta on
 set output-meta on
 set convert-meta off
 
-$if mode=vi
-    set keymap vi-command
-    "gg": beginning-of-history
-    "G": end-of-history
+# Completion settings
+set completion-ignore-case on
+set completion-map-case on
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+set completion-query-items 200
+set visible-stats on
+set mark-directories on
+set mark-symlinked-directories on
+set match-hidden-files off
 
-    set keymap vi-insert
-    "\C-l": clear-screen
-    "\C-w": backward-kill-word
-    # auto-complete from the history
-    "\C-p": history-search-backward
-    "\C-n": history-search-forward
-    "\C-s": yank-last-arg
-    "\C-a":yank-last-arg
+# Pagination
+set page-completions off
+
+# Bell settings
+set bell-style none
+
+# Editing mode (emacs-style by default)
+set editing-mode emacs
+# Uncomment for vi-style editing:
+# set editing-mode vi
+
+# =====================================================
+# Key Bindings - Emacs Mode
+# =====================================================
+
+$if mode=emacs
+
+# History navigation
+"\C-p": history-search-backward
+"\C-n": history-search-forward
+
+# Word movement (Alt+f/b)
+"\ef": forward-word
+"\eb": backward-word
+
+# Line editing
+"\C-k": kill-line
+"\C-u": unix-line-discard
+"\C-w": unix-word-rubout
+"\C-y": yank
+
+# Completion
+"\t": complete
+"\e\t": insert-tab
+
+# Case conversion
+"\eu": upcase-word
+"\el": downcase-word
+"\ec": capitalize-word
+
+# Undo
+"\C-_": undo
+"\C-xu": undo
+
+# Quote current line
+"\eq": quote-line
+
+# Transpose
+"\C-t": transpose-chars
+"\et": transpose-words
+
+# Advanced editing
+"\C-]": character-search
+"\e\C-]": character-search-backward
+"\C-x\C-e": edit-and-execute-command
+
+# Directory navigation shortcuts
+"\C-x\C-d": dump-functions
+"\C-x\C-v": dump-variables
+
 $endif
 
-# IPython needs this to appear at the bottom of the
-# file for clear-screen to work
-set keymap vi
+# =====================================================
+# Key Bindings - Vi Mode (if enabled)
+# =====================================================
+
+$if mode=vi
+
+# Vi insert mode mappings
+set keymap vi-insert
+"\C-l": clear-screen
+"\C-a": beginning-of-line
+"\C-e": end-of-line
+"\C-w": unix-word-rubout
+"\C-k": kill-line
+"\C-u": unix-line-discard
+
+# Vi command mode mappings  
+set keymap vi-command
+"gg": beginning-of-history
+"G": end-of-history
+"k": history-search-backward
+"j": history-search-forward
+
+$endif
+
+# =====================================================
+# Application-Specific Settings
+# =====================================================
+
+# Bash-specific settings
+$if Bash
+    set colored-stats on
+    set colored-completion-prefix on
+    
+    # Enable history expansion with space
+    Space: magic-space
+    
+    # Better directory completion
+    set mark-directories on
+    set mark-symlinked-directories on
+    
+    # Don't complete empty lines
+    set disable-completion off
+$endif
+
+# Python REPL settings
+$if Python
+    set completion-ignore-case on
+    set show-all-if-ambiguous on
+    "\t": complete
+$endif
+
+# MySQL client settings
+$if mysql
+    set completion-ignore-case on
+    "\C-u": unix-line-discard
+$endif
+
+# =====================================================
+# Modern Enhancements
+# =====================================================
+
+# Colored completion
+set colored-stats on
+set colored-completion-prefix on
+
+# Better pasting
+set enable-bracketed-paste on
+
+# Smart case completion
+set completion-map-case on
+
+# Show file type indicators
+set visible-stats on
+
+# Menu completion behavior
+set menu-complete-display-prefix on
+
+# Skip completed text on successive completions
+set skip-completed-text on
+
+# Revert partially typed commands on new prompt
+set revert-all-at-newline on
+
+# ===================================================== 
+# Custom Macros
+# =====================================================
+
+# Quick directory shortcuts
+"\C-x1": "cd ~/\C-m"
+"\C-x2": "cd ~/Documents/\C-m"  
+"\C-x3": "cd ~/workspace/\C-m"
+
+# Common commands
+"\C-xl": "ls -la\C-m"
+"\C-xg": "git status\C-m"
+"\C-xh": "history | tail -20\C-m"
+
+# Clear screen and list directory
+"\C-x\C-l": "\C-l ls\C-m"
+
+# Quick sudo
+"\es": "\C-asudo \C-e"
+
+# Quote current word
+"\eq": "\eb\"\ef\""
+
+# =====================================================
+# Search Settings  
+# =====================================================
+
+# Incremental search
+"\C-r": reverse-search-history
+"\C-s": forward-search-history
+
+# Non-incremental search
+"\er": redraw-current-line
+"\es": ""
+
+# =====================================================
+# Terminal-Specific Settings
+# =====================================================
+
+# xterm key bindings
+$if term=xterm
+    "\eOH": beginning-of-line
+    "\eOF": end-of-line
+    
+    # Function keys
+    "\e[11~": "Function Key 1"
+    "\e[12~": "Function Key 2"
+    "\e[13~": "Function Key 3"
+    "\e[14~": "Function Key 4"
+    "\e[15~": "Function Key 5"
+$endif
+
+# rxvt key bindings
+$if term=rxvt
+    "\e[7~": beginning-of-line
+    "\e[8~": end-of-line
+$endif
+
+# screen key bindings  
+$if term=screen
+    "\eOH": beginning-of-line
+    "\eOF": end-of-line
+$endif

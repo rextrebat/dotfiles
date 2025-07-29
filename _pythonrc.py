@@ -1,182 +1,342 @@
+#!/usr/bin/env python3
 """
-This file is executed when the Python interactive shell is started if
-$PYTHONSTARTUP is in your environment and points to this file. It's just
-regular Python commands, so do what you will. Your ~/.inputrc file can greatly
-complement this file.
+Modern Python REPL Configuration
+Enhanced interactive Python experience with modern tools and utilities
+"""
 
-"""
+import sys
 import os
 
-try:
-    import readline
-    import rlcompleter
-    import atexit
-except ImportError:
-    print("You need readline, rlcompleter, and atexit")
+# =====================================================
+# Basic Setup
+# =====================================================
 
-readline.parse_and_bind("tab: complete")
-# this is needed for OSX, doesn't work in Linux
-#readline.parse_and_bind ("bind ^I rl_complete")
+# Enable UTF-8 encoding
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stderr.reconfigure(encoding='utf-8')
 
-class Completer(object):
-    def __init__(self):
-        # Enable a History
-        self.HISTFILE=os.path.expanduser("%s/.pyhistory" % os.environ["HOME"])
+# Add current directory to path for convenience
+if '' not in sys.path:
+    sys.path.insert(0, '')
 
-        # Read the existing history if there is one
-        if os.path.exists(self.HISTFILE):
-            readline.read_history_file(self.HISTFILE)
+# =====================================================
+# History and Completion
+# =====================================================
 
-        # Set maximum number of items that will be written to the history file
-        readline.set_history_length(300)
-        atexit.register(self.savehist)
-
-    def savehist(self):
+def setup_history():
+    """Setup command history with better defaults"""
+    try:
         import readline
-        readline.write_history_file(self.HISTFILE)
-
-
-c = Completer()
-
-WELCOME=''
-# Color Support
-class TermColors(dict):
-    """Gives easy access to ANSI color codes. Attempts to fall back to no color
-    for certain TERM values. (Mostly stolen from IPython.)"""
-
-    COLOR_TEMPLATES = (
-        ("Black"       , "0;30"),
-        ("Red"         , "0;31"),
-        ("Green"       , "0;32"),
-        ("Brown"       , "0;33"),
-        ("Blue"        , "0;34"),
-        ("Purple"      , "0;35"),
-        ("Cyan"        , "0;36"),
-        ("LightGray"   , "0;37"),
-        ("DarkGray"    , "1;30"), ("LightRed"    , "1;31"),
-        ("LightGreen"  , "1;32"),
-        ("Yellow"      , "1;33"),
-        ("LightBlue"   , "1;34"),
-        ("LightPurple" , "1;35"),
-        ("LightCyan"   , "1;36"),
-        ("White"       , "1;37"),
-        ("Normal"      , "0"),
-    )
-
-    NoColor = ''
-    _base  = '\001\033[%sm\002'
-
-    def __init__(self):
-        if os.environ.get('TERM') in ('xterm-color', 'xterm-256color', 'linux',
-                                    'screen', 'screen-256color', 'screen-bce'):
-            self.update(dict([(k, self._base % v) for k,v in self.COLOR_TEMPLATES]))
-        else:
-            self.update(dict([(k, self.NoColor) for k,v in self.COLOR_TEMPLATES]))
-_c = TermColors()
-
-
-
-import sys
-# Enable Color Prompts
-sys.ps1 = '%s>>> %s' % (_c['Green'], _c['Normal'])
-sys.ps2 = '%s... %s' % (_c['Red'], _c['Normal'])
-
-# Enable Pretty Printing for stdout
-def my_displayhook(value):
-    if value is not None:
+        import atexit
+        
+        # History file location
+        history_file = os.path.expanduser('~/.python_history')
+        
+        # Read existing history
         try:
-            import __builtin__
-            __builtin__._ = value
-        except ImportError:
-            __builtins__._ = value
+            readline.read_history_file(history_file)
+        except FileNotFoundError:
+            pass
+        
+        # Set history length
+        readline.set_history_length(10000)
+        
+        # Save history on exit
+        atexit.register(readline.write_history_file, history_file)
+        
+        # Enable tab completion
+        readline.parse_and_bind('tab: complete')
+        
+        # Vi-style editing (comment out for emacs style)
+        # readline.parse_and_bind('set editing-mode vi')
+        
+        return True
+    except ImportError:
+        return False
 
+def setup_completion():
+    """Enhanced tab completion"""
+    try:
+        import readline
+        import rlcompleter
+        
+        # Smart completion
+        if 'libedit' in readline.__doc__:
+            readline.parse_and_bind("bind ^I rl_complete")
+        else:
+            readline.parse_and_bind("tab: complete")
+        
+        # Case-insensitive completion
+        readline.parse_and_bind('set completion-ignore-case on')
+        
+        # Show all completions immediately
+        readline.parse_and_bind('set show-all-if-ambiguous on')
+        
+    except ImportError:
+        pass
+
+# Setup history and completion
+setup_history()
+setup_completion()
+
+# =====================================================
+# Pretty Printing and Display
+# =====================================================
+
+def setup_pretty_printing():
+    """Enhanced output formatting"""
+    try:
         import pprint
-        pprint.pprint(value)
-        del pprint
+        
+        # Better default repr for containers
+        def pretty_repr(obj):
+            if isinstance(obj, (list, tuple, dict, set)):
+                return pprint.pformat(obj, width=120, depth=4)
+            return repr(obj)
+        
+        # Install as display hook
+        def pretty_display_hook(obj):
+            if obj is not None:
+                try:
+                    # Try rich first if available
+                    from rich.console import Console
+                    from rich.pretty import Pretty
+                    console = Console()
+                    console.print(Pretty(obj))
+                except ImportError:
+                    # Fallback to pprint
+                    if isinstance(obj, (list, tuple, dict, set)):
+                        pprint.pprint(obj, width=120)
+                    else:
+                        print(repr(obj))
+        
+        sys.displayhook = pretty_display_hook
+        
+    except ImportError:
+        pass
 
-sys.displayhook = my_displayhook
+setup_pretty_printing()
 
-# Django Helpers
-def SECRET_KEY():
-    "Generates a new SECRET_KEY that can be used in a project settings file." 
+# =====================================================
+# Useful Imports and Functions
+# =====================================================
 
-    from random import choice
-    return ''.join(
-            [choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)')
-                for i in range(50)])
-
-# If we're working with a Django project, set up the environment
-if 'DJANGO_SETTINGS_MODULE' in os.environ:
-    from django.db.models.loading import get_models
-    from django.test.client import Client
-    from django.test.utils import setup_test_environment, teardown_test_environment
-    from django.conf import settings as S
-
-    class DjangoModels(object):
-        """Loop through all the models in INSTALLED_APPS and import them."""
-        def __init__(self):
-            for m in get_models():
-                setattr(self, m.__name__, m)
-
-    A = DjangoModels()
-    C = Client()
-
-    WELCOME += """%(Green)s
-    Django environment detected.
-* Your INSTALLED_APPS models are available as `A`.
-* Your project settings are available as `S`.
-* The Django test client is available as `C`.
-%(Normal)s""" % _c
-
-    setup_test_environment()
-    S.DEBUG_PROPAGATE_EXCEPTIONS = True
-
-    WELCOME += """%(LightPurple)s
-Warning: the Django test environment has been set up; to restore the
-normal environment call `teardown_test_environment()`.
-
-Warning: DEBUG_PROPAGATE_EXCEPTIONS has been set to True.
-%(Normal)s""" % _c
-
-# Start an external editor with \e
-# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/438813/
-
-EDITOR = os.environ.get('EDITOR', 'vim')
-EDIT_CMD = '\e'
-
-from tempfile import mkstemp
-from code import InteractiveConsole
-
-class EditableBufferInteractiveConsole(InteractiveConsole):
-    def __init__(self, *args, **kwargs):
-        self.last_buffer = [] # This holds the last executed statement
-        InteractiveConsole.__init__(self, *args, **kwargs)
-
-    def runsource(self, source, *args):
-        self.last_buffer = [ source.encode('latin-1') ]
-        return InteractiveConsole.runsource(self, source, *args)
-
-    def raw_input(self, *args):
-        line = InteractiveConsole.raw_input(self, *args)
-        if line == EDIT_CMD:
-            fd, tmpfl = mkstemp('.py')
-            os.write(fd, b'\n'.join(self.last_buffer))
-            os.close(fd)
-            os.system('%s %s' % (EDITOR, tmpfl))
-            line = open(tmpfl).read()
-            os.unlink(tmpfl)
-            tmpfl = ''
-            lines = line.split( '\n' )
-            for i in range(len(lines) - 1): self.push( lines[i] )
-            line = lines[-1]
-        return line
-
-# clean up namespace
-del sys
-
-c = EditableBufferInteractiveConsole(locals=locals())
-c.interact(banner=WELCOME)
-
-# Exit the Python shell on exiting the InteractiveConsole
+# Common imports for convenience
+import json
+import re
 import sys
-sys.exit()
+import os
+from datetime import datetime, timedelta
+from pathlib import Path
+from collections import defaultdict, Counter, namedtuple
+from functools import partial, reduce
+from itertools import chain, combinations, permutations
+
+# Try to import commonly used libraries
+try:
+    import requests
+except ImportError:
+    pass
+
+try:
+    import pandas as pd
+    import numpy as np
+except ImportError:
+    pass
+
+# =====================================================
+# Utility Functions
+# =====================================================
+
+def ls(path='.'):
+    """List directory contents"""
+    path = Path(path)
+    if path.is_dir():
+        return list(path.iterdir())
+    return []
+
+def pwd():
+    """Print working directory"""
+    return Path.cwd()
+
+def cd(path):
+    """Change directory"""
+    os.chdir(path)
+    return Path.cwd()
+
+def cat(filename):
+    """Read file contents"""
+    return Path(filename).read_text()
+
+def grep(pattern, text):
+    """Simple grep functionality"""
+    if isinstance(text, str):
+        lines = text.split('\n')
+    else:
+        lines = text
+    return [line for line in lines if re.search(pattern, line)]
+
+def json_pp(obj):
+    """Pretty print JSON"""
+    if isinstance(obj, str):
+        obj = json.loads(obj)
+    print(json.dumps(obj, indent=2, ensure_ascii=False))
+
+def timeit(func, *args, **kwargs):
+    """Simple timing function"""
+    import time
+    start = time.time()
+    result = func(*args, **kwargs)
+    end = time.time()
+    print(f"Execution time: {end - start:.4f} seconds")
+    return result
+
+def sizeof(obj):
+    """Get size of object in memory"""
+    import sys
+    return sys.getsizeof(obj)
+
+def type_info(obj):
+    """Detailed type information"""
+    info = {
+        'type': type(obj).__name__,
+        'module': type(obj).__module__,
+        'size': sizeof(obj),
+        'methods': [m for m in dir(obj) if not m.startswith('_')],
+    }
+    
+    if hasattr(obj, '__len__'):
+        info['length'] = len(obj)
+    
+    return info
+
+def reload_module(module):
+    """Reload a module"""
+    import importlib
+    return importlib.reload(module)
+
+# =====================================================
+# Development Helpers
+# =====================================================
+
+def debug():
+    """Start debugger"""
+    import pdb
+    pdb.set_trace()
+
+def profile(func, *args, **kwargs):
+    """Profile a function"""
+    import cProfile
+    import pstats
+    from io import StringIO
+    
+    pr = cProfile.Profile()
+    pr.enable()
+    result = func(*args, **kwargs)
+    pr.disable()
+    
+    s = StringIO()
+    ps = pstats.Stats(pr, stream=s).sort_stats('cumulative')
+    ps.print_stats()
+    print(s.getvalue())
+    
+    return result
+
+def inspect_obj(obj):
+    """Detailed object inspection"""
+    import inspect
+    
+    print(f"Object: {obj}")
+    print(f"Type: {type(obj)}")
+    print(f"Module: {getattr(type(obj), '__module__', 'N/A')}")
+    print(f"Doc: {getattr(obj, '__doc__', 'No documentation')}")
+    
+    if hasattr(obj, '__dict__'):
+        print(f"Attributes: {list(obj.__dict__.keys())}")
+    
+    print(f"Methods: {[m for m in dir(obj) if callable(getattr(obj, m)) and not m.startswith('_')]}")
+
+# =====================================================
+# Interactive Helpers  
+# =====================================================
+
+def help_commands():
+    """Show available custom commands"""
+    commands = {
+        'ls(path)': 'List directory contents',
+        'pwd()': 'Print working directory', 
+        'cd(path)': 'Change directory',
+        'cat(file)': 'Read file contents',
+        'grep(pattern, text)': 'Search for pattern in text',
+        'json_pp(obj)': 'Pretty print JSON',
+        'timeit(func, *args)': 'Time function execution',
+        'sizeof(obj)': 'Get object size in memory',
+        'type_info(obj)': 'Detailed type information',
+        'reload_module(mod)': 'Reload a module',
+        'debug()': 'Start debugger',
+        'profile(func, *args)': 'Profile function execution',
+        'inspect_obj(obj)': 'Detailed object inspection'
+    }
+    
+    print("Available custom commands:")
+    for cmd, desc in commands.items():
+        print(f"  {cmd:<25} - {desc}")
+
+# Add help command to builtins for easy access
+import builtins
+builtins.help_commands = help_commands
+
+# =====================================================
+# Startup Message
+# =====================================================
+
+def show_startup_info():
+    """Show Python REPL startup information"""
+    python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    
+    print(f"🐍 Modern Python {python_version} REPL")
+    print(f"📁 Working directory: {os.getcwd()}")
+    
+    # Show available enhancements
+    enhancements = []
+    
+    try:
+        import readline
+        enhancements.append("readline")
+    except ImportError:
+        pass
+    
+    try:
+        from rich.console import Console
+        enhancements.append("rich")
+    except ImportError:
+        pass
+        
+    try:
+        import requests
+        enhancements.append("requests")
+    except ImportError:
+        pass
+        
+    try:
+        import pandas
+        enhancements.append("pandas/numpy")
+    except ImportError:
+        pass
+    
+    if enhancements:
+        print(f"✨ Available: {', '.join(enhancements)}")
+    
+    print("💡 Type 'help_commands()' for custom utilities")
+    print()
+
+# Show startup info
+show_startup_info()
+
+# =====================================================
+# Cleanup
+# =====================================================
+
+# Clean up namespace
+del setup_history, setup_completion, setup_pretty_printing, show_startup_info

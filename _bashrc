@@ -1,197 +1,343 @@
+# =====================================================
+# Modern Bash Configuration
+# Fallback shell configuration with modern enhancements
+# =====================================================
+
 # If not running interactively, don't do anything
-[ -z "$PS1" ] && return
+case $- in
+    *i*) ;;
+      *) return;;
+esac
 
-#osx color terminal
-export CLICOLOR=1
-# don't put duplicate lines in the history. See bash(1) for more options
-# don't overwrite GNU Midnight Commander's setting of `ignorespace'.
-HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
-# ... or force ignoredups and ignorespace
-HISTCONTROL=ignoreboth
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
 
-# append to the history file, don't overwrite it
+# =====================================================
+# Shell Options
+# =====================================================
+
+# History control
 shopt -s histappend
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
-shopt -s checkwinsize
+shopt -s cmdhist
+shopt -s lithist
 
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+# Directory navigation
+shopt -s autocd
+shopt -s cdspell
+shopt -s dirspell
+shopt -s globstar
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
+# Job control
+shopt -s checkjobs
 
-#PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$'
-PS1='\[\033[01;31m\]\w\[\033[00m\]\n${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\u\[\033[01;32m\]@\[\033[01;34m\]\h\[\033[00m\]\$'
+# Completion
+shopt -s no_empty_cmd_completion
+shopt -s completion_strip_exe
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
+# Other useful options
+shopt -s expand_aliases
+shopt -s extglob
+shopt -s nocaseglob
+shopt -s nullglob
 
-
-# Set up TERM variables.
-# vt100 and xterm have no color in vim (at least on unixs), but if we call them xterm-color, they will.
-# (vt100 for F-Secure SSH.)
-# This may well be the case for some other terms, so I'm putting them here.
-# Also set up a variable to indicate whether to set up the title functions.
-# TODO gnome-terminal, or however it reports itself
-case $TERM in
-
-  screen)
-    TERM_IS_COLOR=true
-    TERM_NOT_RECOGNIZED_AS_COLOR_BY_VIM=false
-    TERM_NOT_RECOGNIZED_BY_SUN_UTILS=false
-    TERM_CAN_TITLE=true
-  ;;
-
-  xterm-color|color_xterm|rxvt|Eterm|screen*) # screen.linux|screen-w
-    TERM_IS_COLOR=true
-    TERM_NOT_RECOGNIZED_AS_COLOR_BY_VIM=false
-    TERM_NOT_RECOGNIZED_BY_SUN_UTILS=true
-    TERM_CAN_TITLE=true
-  ;;
-
-  linux)
-    TERM_IS_COLOR=true
-    TERM_NOT_RECOGNIZED_AS_COLOR_BY_VIM=false
-    TERM_NOT_RECOGNIZED_BY_SUN_UTILS=true
-    TERM_CAN_TITLE=false
-  ;;
-
-  xterm|vt100)
-    TERM_IS_COLOR=true
-    TERM_NOT_RECOGNIZED_AS_COLOR_BY_VIM=true
-    TERM_NOT_RECOGNIZED_BY_SUN_UTILS=false
-    TERM_CAN_TITLE=true
-  ;;
-
-  *xterm*|eterm|rxvt*)
-    TERM_IS_COLOR=true
-    TERM_NOT_RECOGNIZED_AS_COLOR_BY_VIM=true
-    TERM_NOT_RECOGNIZED_BY_SUN_UTILS=true
-    TERM_CAN_TITLE=true
-  ;;
-
-  *)
-    TERM_IS_COLOR=false
-    TERM_NOT_RECOGNIZED_AS_COLOR_BY_VIM=false
-    TERM_NOT_RECOGNIZED_BY_SUN_UTILS=false
-    TERM_CAN_TITLE=false
-  ;;
-
-esac
-
-# dircolors... make sure that we have a color terminal, dircolors exists, and ls supports it.
-if $TERM_IS_COLOR && ( dircolors --help && ls --color ) &> /dev/null; then
-  # For some reason, the unixs machines need me to use $HOME instead of ~
-  # List files from highest priority to lowest.  As soon as the loop finds one that works, it will exit.
-  for POSSIBLE_DIR_COLORS in "$HOME/.dir_colors" "/etc/DIR_COLORS"; do
-    [[ -f "$POSSIBLE_DIR_COLORS" ]] && [[ -r "$POSSIBLE_DIR_COLORS" ]] && eval `dircolors -b "$POSSIBLE_DIR_COLORS"` && break
-  done
-
-  alias ls="ls --color=auto"
-  alias ll="ls --color=auto -l"
-  alias grep='grep --color=auto'
-  alias fgrep='fgrep --color=auto'
-  alias egrep='egrep --color=auto'
-  alias rm='rm -i'
-else
-  # No color, so put a slash at the end of directory names, etc. to differentiate.
-  alias ls="ls -F"
-  alias ll="ls -lF"
-fi
-
-# Alias definitions.
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+# Enable programmable completion features
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
+  fi
 fi
-# Set $TERM for libvte terminals that set $TERM wrong (like gnome-terminal)
-{
-  [ "_$TERM" = "_xterm" ] && type ldd && type grep && type tput && [ -L "/proc/$PPID/exe" ] && {
-    if ldd /proc/$PPID/exe | grep libvte; then
-      if [ "`tput -Txterm-256color colors`" = "256" ]; then
-        TERM=xterm-256color
-      elif [ "`tput -Txterm-256color colors`" = "256" ]; then
-        TERM=xterm-256color
-      elif tput -T xterm; then
-        TERM=xterm
-      fi
+
+# =====================================================
+# History Configuration
+# =====================================================
+
+export HISTCONTROL="ignoreboth:erasedups"
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+export HISTTIMEFORMAT="%F %T "
+export HISTIGNORE="ls:ll:la:cd:cd -:pwd:exit:date:* --help:history:clear"
+
+# Append to history file immediately
+PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+
+# =====================================================
+# Modern Aliases
+# =====================================================
+
+# Basic commands with safety and colors
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ln='ln -i'
+
+# Directory listing
+if command -v exa >/dev/null 2>&1; then
+    alias ls='exa --color=auto --group-directories-first'
+    alias ll='exa -la --color=auto --group-directories-first --git'
+    alias la='exa -a --color=auto --group-directories-first'
+    alias lt='exa --tree --level=2'
+    alias lT='exa --tree'
+elif command -v lsd >/dev/null 2>&1; then
+    alias ls='lsd --color=auto --group-dirs first'
+    alias ll='lsd -la --color=auto --group-dirs first'
+    alias la='lsd -a --color=auto --group-dirs first'
+    alias lt='lsd --tree --depth=2'
+else
+    alias ls='ls --color=auto'
+    alias ll='ls -la --color=auto'
+    alias la='ls -a --color=auto'
+    alias l='ls -CF --color=auto'
+fi
+
+# Directory navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias -- -='cd -'
+
+# Modern tools
+if command -v bat >/dev/null 2>&1; then
+    alias cat='bat --style=plain'
+    alias less='bat'
+fi
+
+if command -v fd >/dev/null 2>&1; then
+    alias find='fd'
+fi
+
+if command -v rg >/dev/null 2>&1; then
+    alias grep='rg --color=auto'
+else
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+if command -v htop >/dev/null 2>&1; then
+    alias top='htop'
+fi
+
+if command -v ncdu >/dev/null 2>&1; then
+    alias du='ncdu'
+fi
+
+# Git aliases
+alias g='git'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git log --oneline'
+alias gd='git diff'
+alias gb='git branch'
+alias gco='git checkout'
+
+# System information
+alias df='df -h'
+alias free='free -h'
+alias pscpu='ps auxf | sort -nr -k 3'
+alias psmem='ps auxf | sort -nr -k 4'
+
+# Network
+alias ping='ping -c 5'
+alias ports='netstat -tulanp'
+
+# Archives
+alias untar='tar -zxvf'
+alias tar='tar -czf'
+
+# Quick edit
+alias vimrc='$EDITOR ~/.bashrc'
+alias reload='source ~/.bashrc'
+
+# =====================================================
+# Functions
+# =====================================================
+
+# Create directory and cd into it
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# Extract various archive formats
+extract() {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.bz2)   tar xjf "$1"     ;;
+            *.tar.gz)    tar xzf "$1"     ;;
+            *.bz2)       bunzip2 "$1"     ;;
+            *.rar)       unrar x "$1"     ;;
+            *.gz)        gunzip "$1"      ;;
+            *.tar)       tar xf "$1"      ;;
+            *.tbz2)      tar xjf "$1"     ;;
+            *.tgz)       tar xzf "$1"     ;;
+            *.zip)       unzip "$1"       ;;
+            *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;;
+            *)           echo "'$1' cannot be extracted via extract()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file!"
     fi
-  }
-} >/dev/null 2>/dev/null
+}
 
-venwrap=`type -P virtualenvwrapper.sh`
-if [ "$venwrap" != "" ]; then
-    source $venwrap
+# Find file by name
+ff() {
+    if command -v fd >/dev/null 2>&1; then
+        fd "$1"
+    else
+        find . -name "*$1*" -type f
+    fi
+}
+
+# Find directory by name
+fd_dir() {
+    if command -v fd >/dev/null 2>&1; then
+        fd -t d "$1"
+    else
+        find . -name "*$1*" -type d
+    fi
+}
+
+# Weather function
+weather() {
+    local city="${1:-}"
+    if [ -n "$city" ]; then
+        curl -s "wttr.in/$city"
+    else
+        curl -s "wttr.in"
+    fi
+}
+
+# Quick webserver
+serve() {
+    local port="${1:-8000}"
+    python3 -m http.server "$port"
+}
+
+# Git clone and cd
+gclone() {
+    git clone "$1" && cd "$(basename "$1" .git)"
+}
+
+# Process search
+psg() {
+    ps aux | grep -v grep | grep -i "$1"
+}
+
+# =====================================================
+# Prompt Configuration
+# =====================================================
+
+# Color definitions
+if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+    # We have color support
+    RED='\[\033[0;31m\]'
+    GREEN='\[\033[0;32m\]'
+    YELLOW='\[\033[0;33m\]'
+    BLUE='\[\033[0;34m\]'
+    PURPLE='\[\033[0;35m\]'
+    CYAN='\[\033[0;36m\]'
+    WHITE='\[\033[0;37m\]'
+    BOLD='\[\033[1m\]'
+    RESET='\[\033[0m\]'
+else
+    # No color support
+    RED=''
+    GREEN=''
+    YELLOW=''
+    BLUE=''
+    PURPLE=''
+    CYAN=''
+    WHITE=''
+    BOLD=''
+    RESET=''
 fi
 
-vim=`type -P vim`
-if [ "$vim" == "" ]; then
-    vim="gvim -v"
+# Git prompt function
+git_prompt() {
+    local git_status git_branch
+    git_status=$(git status --porcelain 2>/dev/null)
+    git_branch=$(git branch 2>/dev/null | grep '^*' | cut -d' ' -f2-)
+    
+    if [ -n "$git_branch" ]; then
+        if [ -n "$git_status" ]; then
+            echo " ${RED}($git_branch)${RESET}"
+        else
+            echo " ${GREEN}($git_branch)${RESET}"
+        fi
+    fi
+}
+
+# Set the prompt
+if [ "$USER" = "root" ]; then
+    PS1="${RED}${BOLD}\u@\h${RESET}:${BLUE}\w${RESET}\$(git_prompt)${RED}# ${RESET}"
+else
+    PS1="${GREEN}${BOLD}\u@\h${RESET}:${BLUE}\w${RESET}\$(git_prompt)${YELLOW}\$ ${RESET}"
 fi
 
-alias vim="$vim"
+# =====================================================
+# Environment Variables
+# =====================================================
 
-# osx vim
-if [ -x "/Applications/MacVim.app/Contents/MacOS/Vim" ]; then
-    PATH=/Applications/MacVim.app/Contents/MacOS/:$PATH
+# Editor
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+# Pager
+export PAGER="less"
+export LESS="-R -F -X -M -i"
+
+# Colors for ls
+export LS_COLORS="di=1;34:ln=1;36:so=1;35:pi=1;33:ex=1;32:bd=1;33:cd=1;33:su=1;31:sg=1;31:tw=1;34:ow=1;34"
+
+# =====================================================
+# FZF Integration
+# =====================================================
+
+if command -v fzf >/dev/null 2>&1; then
+    # Enable fzf key bindings
+    if [ -f /usr/share/fzf/key-bindings.bash ]; then
+        . /usr/share/fzf/key-bindings.bash
+    elif [ -f ~/.fzf/shell/key-bindings.bash ]; then
+        . ~/.fzf/shell/key-bindings.bash
+    fi
+    
+    # Enable fzf completion
+    if [ -f /usr/share/fzf/completion.bash ]; then
+        . /usr/share/fzf/completion.bash
+    elif [ -f ~/.fzf/shell/completion.bash ]; then
+        . ~/.fzf/shell/completion.bash
+    fi
+    
+    # FZF configuration
+    export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --preview 'head -100 {}'"
+    export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
 
-PYTHONSTARTUP=~/.pythonrc.py
-export PYTHONSTARTUP
+# =====================================================
+# Local Customizations
+# =====================================================
 
-parse_git_branch ()
-{
-  git name-rev HEAD 2> /dev/null | sed 's#HEAD\ \(.*\)#(git::\1)#'
-}
-parse_svn_branch() {
-  parse_svn_url | sed -e 's#^'"$(parse_svn_repository_root)"'##g' | awk -F / '{print "(svn::"$1 "/" $2 ")"}'
-}
-parse_svn_url() {
-  svn info 2>/dev/null | sed -ne 's#^URL: ##p'
-}
-parse_svn_repository_root() {
-  svn info 2>/dev/null | sed -ne 's#^Repository Root: ##p'
-}
-set -o vi 
-export EDITOR="$vim"
-export GIT_EDITOR="$vim"
-
-# Add git and svn branch names
-export PS1="$PS1\$(parse_git_branch)\$(parse_svn_branch) "
-# Export GPG key
-export GPGKEY=53F9969E
-# Large history file and append from all terminals
-export HISTSIZE=1000000
-export HISTFILESIZE=1000000
-shopt -s histappend
-
-# specific exports for /opt/software/
-#
-# Titanium Studio
-if [ -d "/opt/software/Titanium_Studio" ]; then
-    export MOZILLA_FIVE_HOME=/usr/lib/mozilla
-    export UBUNTU_MENUPROXY=0
-    export PATH=$PATH:/opt/software/Titanium_Studio/
+# Source local bashrc if it exists
+if [ -f ~/.bashrc.local ]; then
+    . ~/.bashrc.local
 fi
 
-# end specific exports for /opt/software/
+# Source work-specific bashrc if it exists
+if [ -f ~/.bashrc.work ]; then
+    . ~/.bashrc.work
+fi
 
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+# =====================================================
+# Cleanup
+# =====================================================
 
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+# Clean up color variables
+unset RED GREEN YELLOW BLUE PURPLE CYAN WHITE BOLD RESET

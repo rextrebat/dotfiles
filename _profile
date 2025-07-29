@@ -1,34 +1,255 @@
-# ~/.profile: executed by the command interpreter for login shells.
-# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
-# exists.
-# see /usr/share/doc/bash/examples/startup-files for examples.
-# the files are located in the bash-doc package.
+# =====================================================
+# Modern Shell Profile Configuration
+# Environment setup for all POSIX-compatible shells
+# =====================================================
 
-# the default umask is set in /etc/profile; for setting the umask
-# for ssh logins, install and configure the libpam-umask package.
-#umask 022
+# Locale and Language Settings
+# =====================================================
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
 
-# if running bash
-if [ -n "$BASH_VERSION" ]; then
-    # include .bashrc if it exists
-    if [ -f "$HOME/.bashrc" ]; then
-	. "$HOME/.bashrc"
+# Core Environment Variables  
+# =====================================================
+export EDITOR="nvim"
+export VISUAL="nvim"
+export PAGER="less"
+export BROWSER="firefox"
+
+# Terminal and Display
+export TERM="xterm-256color"
+export COLORTERM="truecolor"
+
+# History Settings
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+export HISTCONTROL="ignoredups:ignorespace"
+export HISTTIMEFORMAT="%F %T "
+
+# =====================================================
+# Path Configuration
+# =====================================================
+
+# Initialize PATH if not set
+if [ -z "$PATH" ]; then
+    export PATH="/usr/local/bin:/usr/bin:/bin"
+fi
+
+# Function to safely add to PATH
+add_to_path() {
+    case ":$PATH:" in
+        *":$1:"*) ;;
+        *) export PATH="$1:$PATH" ;;
+    esac
+}
+
+# Add common directories to PATH
+add_to_path "$HOME/.local/bin"
+add_to_path "$HOME/bin"
+add_to_path "/usr/local/sbin"
+add_to_path "/usr/sbin"
+add_to_path "/sbin"
+
+# Language-specific paths
+add_to_path "$HOME/.cargo/bin"              # Rust
+add_to_path "$HOME/.npm-global/bin"         # Node.js
+add_to_path "$HOME/.gem/ruby/bin"           # Ruby gems
+add_to_path "$HOME/go/bin"                  # Go
+add_to_path "$HOME/.local/share/pnpm"       # pnpm
+
+# =====================================================
+# Application Configuration
+# =====================================================
+
+# Python
+export PYTHONSTARTUP="$HOME/.pythonrc.py"
+export PYTHONPATH="$HOME/.local/lib/python"
+export PIP_REQUIRE_VIRTUALENV=false
+export PIPENV_VENV_IN_PROJECT=1
+
+# Node.js
+export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+export NODE_REPL_HISTORY="$HOME/.node_repl_history"
+
+# Less pager
+export LESS="-R -F -X -M -i"
+export LESSHISTFILE="$HOME/.lesshst"
+
+# Grep colors
+export GREP_OPTIONS="--color=auto"
+export GREP_COLOR="1;32"
+
+# Directory colors (if dircolors exists)
+if command -v dircolors >/dev/null 2>&1; then
+    if [ -r "$HOME/.dircolors" ]; then
+        eval "$(dircolors -b "$HOME/.dircolors")"
+    else
+        eval "$(dircolors -b)"
     fi
 fi
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+# FZF configuration
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --preview 'head -100 {}'"
+export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# =====================================================
+# Development Tools
+# =====================================================
+
+# Git
+export GIT_EDITOR="$EDITOR"
+
+# Docker
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
+
+# Go
+export GOPATH="$HOME/go"
+export GOPROXY="https://proxy.golang.org,direct"
+export GOSUMDB="sum.golang.org"
+
+# Rust
+export CARGO_HOME="$HOME/.cargo"
+export RUSTUP_HOME="$HOME/.rustup"
+
+# Java (if JAVA_HOME not set)
+if [ -z "$JAVA_HOME" ] && [ -d "/usr/lib/jvm/default-java" ]; then
+    export JAVA_HOME="/usr/lib/jvm/default-java"
 fi
-export LANGUAGE="en_US:en"
-export LC_MESSAGES="en_US.UTF-8"
-export LC_CTYPE="en_US.UTF-8"
-export LC_COLLATE="en_US.UTF-8"
 
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+# =====================================================
+# XDG Base Directory Specification
+# =====================================================
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"  
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_STATE_HOME="$HOME/.local/state"
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+# Application-specific XDG compliance
+export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+export MACHINE_STORAGE_PATH="$XDG_DATA_HOME/docker-machine"
+export ANSIBLE_CONFIG="$XDG_CONFIG_HOME/ansible/ansible.cfg"
+export ANSIBLE_GALAXY_CACHE_DIR="$XDG_CACHE_HOME/ansible/galaxy_cache"
 
-# Include local fonts
-xset +fp /home/kdasgupta/.local/share/fonts
-xset fp rehash
+# =====================================================
+# Security and Privacy
+# =====================================================
+
+# GPG
+export GPG_TTY=$(tty)
+export GNUPGHOME="$HOME/.gnupg"
+
+# SSH
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+
+# Disable telemetry for various tools
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+export NEXT_TELEMETRY_DISABLED=1
+export GATSBY_TELEMETRY_DISABLED=1
+
+# =====================================================
+# Performance and Optimization
+# =====================================================
+
+# Enable parallel make by default
+if [ -z "$MAKEFLAGS" ]; then
+    export MAKEFLAGS="-j$(nproc 2>/dev/null || echo 2)"
+fi
+
+# Ccache
+if command -v ccache >/dev/null 2>&1; then
+    export USE_CCACHE=1
+    export CCACHE_DIR="$XDG_CACHE_HOME/ccache"
+fi
+
+# =====================================================
+# Modern Tool Replacements
+# =====================================================
+
+# Check for and use modern alternatives
+if command -v exa >/dev/null 2>&1; then
+    alias ls='exa --color=auto --group-directories-first'
+    alias ll='exa -la --color=auto --group-directories-first'
+    alias la='exa -a --color=auto --group-directories-first'
+elif command -v lsd >/dev/null 2>&1; then
+    alias ls='lsd --color=auto --group-dirs first'
+    alias ll='lsd -la --color=auto --group-dirs first'
+    alias la='lsd -a --color=auto --group-dirs first'
+else
+    alias ls='ls --color=auto'
+    alias ll='ls -la --color=auto'
+    alias la='ls -a --color=auto'
+fi
+
+if command -v bat >/dev/null 2>&1; then
+    alias cat='bat --style=plain'
+    export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+fi
+
+if command -v fd >/dev/null 2>&1; then
+    alias find='fd'
+fi
+
+if command -v rg >/dev/null 2>&1; then
+    alias grep='rg'
+fi
+
+if command -v delta >/dev/null 2>&1; then
+    export GIT_PAGER="delta"
+fi
+
+# =====================================================
+# Conditional Includes
+# =====================================================
+
+# Load local profile if it exists
+if [ -r "$HOME/.profile.local" ]; then
+    . "$HOME/.profile.local"
+fi
+
+# Load work-specific profile if it exists
+if [ -r "$HOME/.profile.work" ]; then
+    . "$HOME/.profile.work"
+fi
+
+# Platform-specific configurations
+case "$(uname -s)" in
+    Darwin*)
+        # macOS specific
+        if [ -r "$HOME/.profile.macos" ]; then
+            . "$HOME/.profile.macos"
+        fi
+        # Homebrew
+        if [ -d "/opt/homebrew" ]; then
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+        elif [ -d "/usr/local/Homebrew" ]; then
+            eval "$(/usr/local/bin/brew shellenv)"
+        fi
+        ;;
+    Linux*)
+        # Linux specific
+        if [ -r "$HOME/.profile.linux" ]; then
+            . "$HOME/.profile.linux"
+        fi
+        ;;
+esac
+
+# =====================================================
+# Cleanup
+# =====================================================
+
+# Remove the add_to_path function from the environment
+unset -f add_to_path
+
+# =====================================================
+# Final Setup
+# =====================================================
+
+# Ensure proper permissions on SSH directory
+if [ -d "$HOME/.ssh" ]; then
+    chmod 700 "$HOME/.ssh"
+fi
+
+# Create XDG directories if they don't exist
+mkdir -p "$XDG_CONFIG_HOME" "$XDG_DATA_HOME" "$XDG_CACHE_HOME" "$XDG_STATE_HOME"
