@@ -203,73 +203,14 @@ require("lazy").setup({
     end,
   },
   
-  -- Language server protocol
-  {
-    "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-      "j-hui/fidget.nvim",
-    },
-    config = function()
-      require("mason").setup()
-      require("mason-lspconfig").setup({
-        ensure_installed = {
-          "lua_ls", "pyright", "tsserver", "html", "cssls", "jsonls", "yamlls"
-        },
-      })
-      
-      require("fidget").setup()
-      
-      local lspconfig = require("lspconfig")
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
-      
-      -- Configure language servers
-      local servers = { "lua_ls", "pyright", "tsserver", "html", "cssls", "jsonls", "yamlls" }
-      for _, server in ipairs(servers) do
-        lspconfig[server].setup({
-          capabilities = capabilities,
-        })
-      end
-      
-      -- Lua language server specific config
-      lspconfig.lua_ls.setup({
-        capabilities = capabilities,
-        settings = {
-          Lua = {
-            diagnostics = { globals = { "vim" } },
-            workspace = { library = vim.api.nvim_get_runtime_file("", true) },
-            telemetry = { enable = false },
-          },
-        },
-      })
-      
-      -- LSP keymaps
-      vim.api.nvim_create_autocmd("LspAttach", {
-        callback = function(event)
-          local map = function(keys, func, desc)
-            vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
-          end
-          
-          map("gd", vim.lsp.buf.definition, "Go to definition")
-          map("gr", vim.lsp.buf.references, "Go to references")
-          map("gI", vim.lsp.buf.implementation, "Go to implementation")
-          map("<leader>D", vim.lsp.buf.type_definition, "Type definition")
-          map("<leader>rn", vim.lsp.buf.rename, "Rename")
-          map("<leader>ca", vim.lsp.buf.code_action, "Code action")
-          map("K", vim.lsp.buf.hover, "Hover documentation")
-        end,
-      })
-    end,
-  },
+  -- Simplified LSP setup for nvim 0.9.5 compatibility
+  -- Note: Full LSP features disabled due to version incompatibility
   
-  -- Autocompletion
+  -- Autocompletion (simplified for nvim 0.9.5)
   {
     "hrsh7th/nvim-cmp",
     event = "InsertEnter",
     dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-cmdline",
@@ -315,9 +256,7 @@ require("lazy").setup({
           end, { "i", "s" }),
         }),
         sources = cmp.config.sources({
-          { name = "nvim_lsp" },
           { name = "luasnip" },
-        }, {
           { name = "buffer" },
           { name = "path" },
         }),
