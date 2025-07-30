@@ -381,10 +381,24 @@ setup_fonts() {
             mkdir -p "$HOME/.local/share/fonts"
             
             # Download and install Nerd Fonts if not present
-            if [[ ! -f "$HOME/.local/share/fonts/JetBrains Mono Nerd Font Complete.ttf" ]]; then
+            if [[ ! -f "$HOME/.local/share/fonts/JetBrainsMonoNerdFont-Regular.ttf" ]]; then
                 log "Installing JetBrains Mono Nerd Font..."
-                curl -fLo "$HOME/.local/share/fonts/JetBrains Mono Nerd Font Complete.ttf" \
-                    https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/JetBrainsMono/NoLigatures/Regular/complete/JetBrains%20Mono%20Regular%20Nerd%20Font%20Complete.ttf
+                local font_base_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/JetBrainsMono/Ligatures"
+                local fonts=(
+                    "Regular/JetBrainsMonoNerdFont-Regular.ttf"
+                    "Bold/JetBrainsMonoNerdFont-Bold.ttf"
+                    "Italic/JetBrainsMonoNerdFont-Italic.ttf"
+                    "BoldItalic/JetBrainsMonoNerdFont-BoldItalic.ttf"
+                )
+                
+                for font in "${fonts[@]}"; do
+                    local font_name=$(basename "$font")
+                    local font_path="$HOME/.local/share/fonts/$font_name"
+                    if [[ ! -f "$font_path" ]]; then
+                        log "Downloading $font_name..."
+                        curl -fLo "$font_path" "$font_base_url/$font" || warn "Failed to download $font_name"
+                    fi
+                done
                 
                 # Refresh font cache
                 fc-cache -fv
