@@ -341,3 +341,7 @@ fi
 
 # Clean up color variables
 unset RED GREEN YELLOW BLUE PURPLE CYAN WHITE BOLD RESET
+. "$HOME/.atuin/bin/env"
+
+[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
+eval "$(atuin init bash)"
