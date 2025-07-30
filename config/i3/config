@@ -63,16 +63,16 @@ set $ws8 "8:  Games"
 set $ws9 "9:  Misc"
 set $ws10 "10:  Music"
 
-# Workspace assignments
-assign [class="kitty|Alacritty|gnome-terminal|xfce4-terminal"] $ws1
-assign [class="Code|code-oss|VSCodium"] $ws2
-assign [class="firefox|Firefox|chromium|Chromium|Google-chrome"] $ws3
-assign [class="Thunar|nautilus|Nemo|dolphin"] $ws4
-assign [class="mpv|vlc|gimp|GIMP"] $ws5
-assign [class="discord|Discord|Slack|TelegramDesktop"] $ws6
-assign [class="thunderbird|Thunderbird|Evolution"] $ws7
-assign [class="Steam|Lutris|heroic"] $ws8
-assign [class="Spotify|spotify"] $ws10
+# Workspace assignments (commented out to allow apps to open in current workspace)
+# assign [class="kitty|Alacritty|gnome-terminal|xfce4-terminal"] $ws1
+# assign [class="Code|code-oss|VSCodium"] $ws2
+# assign [class="firefox|Firefox|chromium|Chromium|Google-chrome"] $ws3
+# assign [class="Thunar|nautilus|Nemo|dolphin"] $ws4
+# assign [class="mpv|vlc|gimp|GIMP"] $ws5
+# assign [class="discord|Discord|Slack|TelegramDesktop"] $ws6
+# assign [class="thunderbird|Thunderbird|Evolution"] $ws7
+# assign [class="Steam|Lutris|heroic"] $ws8
+# assign [class="Spotify|spotify"] $ws10
 
 # =====================================================
 # Key Bindings - Core
