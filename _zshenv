@@ -85,5 +85,8 @@ export HISTFILESIZE=50000
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1
 
+# GPG configuration
+export GPG_TTY=$(tty)
+
 # Clean up duplicates and export
 export PATH
