@@ -203,14 +203,19 @@ require("lazy").setup({
     end,
   },
   
-  -- Simplified LSP setup for nvim 0.9.5 compatibility
-  -- Note: Full LSP features disabled due to version incompatibility
+  -- =====================================================
+  -- LSP Configuration (Native 0.11+ Support)
+  -- =====================================================
   
-  -- Autocompletion (simplified for nvim 0.9.5)
+  -- Native LSP configuration for Neovim 0.11+
+  -- No plugins needed for basic LSP functionality
+  
+  -- Autocompletion with LSP support
   {
     "hrsh7th/nvim-cmp",
     event = "InsertEnter",
     dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-cmdline",
@@ -256,6 +261,7 @@ require("lazy").setup({
           end, { "i", "s" }),
         }),
         sources = cmp.config.sources({
+          { name = "nvim_lsp" },
           { name = "luasnip" },
           { name = "buffer" },
           { name = "path" },
@@ -418,6 +424,101 @@ require("lazy").setup({
     },
   },
 })
+
+-- =====================================================
+-- Native LSP Setup (Neovim 0.11+)
+-- =====================================================
+
+-- LSP servers configuration
+local lsp_servers = {
+  lua_ls = {
+    settings = {
+      Lua = {
+        runtime = { version = 'LuaJIT' },
+        diagnostics = { globals = { 'vim' } },
+        workspace = {
+          library = vim.api.nvim_get_runtime_file("", true),
+          checkThirdParty = false,
+        },
+        telemetry = { enable = false },
+      },
+    },
+  },
+  pyright = {},
+  ts_ls = {},
+  html = {},
+  cssls = {},
+  jsonls = {},
+  yamlls = {},
+  bashls = {},
+  gopls = {},
+  rust_analyzer = {},
+  marksman = {}, -- Markdown
+}
+
+-- Enable LSP servers
+for server, config in pairs(lsp_servers) do
+  vim.lsp.enable(server, config)
+end
+
+-- LSP keymaps (set when LSP attaches to buffer)
+vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if not client then return end
+
+    -- Keymaps
+    local opts = { buffer = args.buf }
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+    vim.keymap.set('n', 'gy', vim.lsp.buf.type_definition, opts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+    vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts)
+    vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, opts)
+    vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+    vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+    vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+
+    -- Format on save for supported servers
+    if client.supports_method('textDocument/formatting') then
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        buffer = args.buf,
+        callback = function()
+          vim.lsp.buf.format({ bufnr = args.buf })
+        end,
+      })
+    end
+  end,
+})
+
+-- Configure diagnostics
+vim.diagnostic.config({
+  virtual_text = {
+    spacing = 4,
+    prefix = '●',
+  },
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+  float = {
+    border = 'rounded',
+    source = 'always',
+    header = '',
+    prefix = '',
+  },
+})
+
+-- Diagnostic signs
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
 
 -- =====================================================
 -- Core Settings
