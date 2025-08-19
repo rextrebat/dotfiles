@@ -5,7 +5,7 @@
 # Automated setup for development environment
 # =====================================================
 
-set -euo pipefail
+set -eo pipefail
 
 # Colors for output
 RED='\033[0;31m'
@@ -155,7 +155,7 @@ select_components() {
     
     local selected_components=()
     
-    for component in "dependencies" "dotfiles" "shell" "nvim" "i3wm" "tmux" "fonts" "extras"; do
+    for component in "dotfiles" "shell" "nvim" "i3wm" "tmux" "fonts" "extras"; do
         echo -e "${BLUE}$component${NC}: ${COMPONENTS[$component]}"
         if prompt_yn "Install $component?"; then
             selected_components+=("$component")
