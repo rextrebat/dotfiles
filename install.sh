@@ -124,47 +124,112 @@ backup_file() {
 }
 
 # =====================================================
-# Installation Functions
+# Component Management
 # =====================================================
 
-install_dependencies() {
-    log "Installing system dependencies..."
+# Available installation components
+declare -A COMPONENTS=(
+    ["dotfiles"]="Core dotfiles (shell configs, git, tmux, etc.)"
+    ["shell"]="Modern shell environment (zsh, starship, zinit, zoxide, atuin)"
+    ["nvim"]="Neovim configuration and plugins"
+    ["i3wm"]="i3 window manager and ecosystem"
+    ["tmux"]="Tmux configuration and plugin manager"
+    ["fonts"]="Programming fonts and Nerd Fonts"
+    ["extras"]="Additional modern CLI tools"
+)
+
+# Component system dependencies mapping
+declare -A COMPONENT_PACKAGES=(
+    ["dotfiles"]="git zsh bash"
+    ["shell"]="zsh curl git"
+    ["nvim"]="neovim curl git"
+    ["i3wm"]="i3 polybar rofi i3lock picom xss-lock xautolock nitrogen dunst arandr pavucontrol brightnessctl"
+    ["tmux"]="tmux git"
+    ["fonts"]="curl"
+    ["extras"]="curl wget"
+)
+
+select_components() {
+    log "Available installation components:"
+    echo
+    
+    local selected_components=()
+    
+    for component in "dependencies" "dotfiles" "shell" "nvim" "i3wm" "tmux" "fonts" "extras"; do
+        echo -e "${BLUE}$component${NC}: ${COMPONENTS[$component]}"
+        if prompt_yn "Install $component?"; then
+            selected_components+=("$component")
+        fi
+        echo
+    done
+    
+    if [[ ${#selected_components[@]} -eq 0 ]]; then
+        warn "No components selected. Exiting."
+        exit 0
+    fi
+    
+    log "Selected components: ${selected_components[*]}"
+    return 0
+}
+
+# =====================================================
+# Dependency Validation
+# =====================================================
+
+install_component_dependencies() {
+    local component="$1"
+    
+    if [[ -z "${COMPONENT_PACKAGES[$component]}" ]]; then
+        return 0
+    fi
+    
+    log "Installing dependencies for $component..."
+    
+    local packages=(${COMPONENT_PACKAGES[$component]})
     
     case "$OS" in
         "linux")
             case "$DISTRO" in
                 "debian")
-                    sudo apt-get update
-                    sudo apt-get install -y \
-                        curl wget git zsh tmux neovim \
-                        build-essential python3-pip nodejs npm \
-                        fd-find ripgrep bat fzf htop ncdu \
-                        fonts-jetbrains-mono fonts-inter \
-                        git-delta \
-                        i3 i3status polybar rofi \
-                        xclip xsel
+                    sudo apt-get update >/dev/null 2>&1
+                    sudo apt-get install -y "${packages[@]}" 2>/dev/null || {
+                        warn "Some packages failed to install for $component"
+                        # Try individual packages
+                        for pkg in "${packages[@]}"; do
+                            sudo apt-get install -y "$pkg" 2>/dev/null || warn "Failed to install: $pkg"
+                        done
+                    }
                     
-                    # Create fd symlink for Debian compatibility
-                    sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true
+                    # Special handling for i3 ecosystem
+                    if [[ "$component" == "i3wm" ]]; then
+                        # Install i3lock-fancy if not available in repos
+                        if ! command -v i3lock-fancy >/dev/null 2>&1; then
+                            if command -v snap >/dev/null 2>&1; then
+                                sudo snap install i3lock-fancy || warn "Failed to install i3lock-fancy via snap"
+                            else
+                                warn "i3lock-fancy not available. Install manually: https://github.com/meskarune/i3lock-fancy"
+                            fi
+                        fi
+                    fi
                     ;;
                 "arch")
-                    sudo pacman -Sy --noconfirm \
-                        curl wget git zsh tmux neovim \
-                        base-devel python-pip nodejs npm \
-                        fd ripgrep bat fzf htop ncdu \
-                        ttf-jetbrains-mono inter-font \
-                        git-delta \
-                        i3-wm i3status polybar rofi \
-                        xclip xsel
+                    sudo pacman -Sy --noconfirm "${packages[@]}" 2>/dev/null || {
+                        warn "Some packages failed to install for $component"
+                    }
+                    
+                    if [[ "$component" == "i3wm" ]]; then
+                        # Try to install i3lock-fancy from AUR
+                        if command -v yay >/dev/null 2>&1; then
+                            yay -S --noconfirm i3lock-fancy-git || warn "Failed to install i3lock-fancy from AUR"
+                        elif command -v paru >/dev/null 2>&1; then
+                            paru -S --noconfirm i3lock-fancy-git || warn "Failed to install i3lock-fancy from AUR"
+                        fi
+                    fi
                     ;;
                 "redhat")
-                    sudo yum install -y \
-                        curl wget git zsh tmux neovim \
-                        gcc gcc-c++ make python3-pip nodejs npm \
-                        fd-find ripgrep bat fzf htop ncdu \
-                        git-delta \
-                        i3 polybar rofi \
-                        xclip xsel
+                    sudo yum install -y "${packages[@]}" 2>/dev/null || {
+                        warn "Some packages failed to install for $component"
+                    }
                     ;;
             esac
             ;;
@@ -174,12 +239,203 @@ install_dependencies() {
                 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             fi
             
-            brew install \
-                curl wget git zsh tmux neovim \
-                python3 node npm \
-                fd ripgrep bat fzf htop ncdu \
-                git-delta \
-                font-jetbrains-mono font-inter
+            # Convert Linux package names to macOS equivalents
+            local mac_packages=()
+            for pkg in "${packages[@]}"; do
+                case "$pkg" in
+                    "i3"|"polybar"|"rofi"|"picom"|"nitrogen"|"dunst")
+                        warn "$pkg not available on macOS"
+                        ;;
+                    *)
+                        mac_packages+=("$pkg")
+                        ;;
+                esac
+            done
+            
+            if [[ ${#mac_packages[@]} -gt 0 ]]; then
+                brew install "${mac_packages[@]}" || warn "Some packages failed to install for $component"
+            fi
+            ;;
+    esac
+    
+    success "Dependencies installed for $component"
+}
+
+validate_system_requirements() {
+    log "Validating system requirements..."
+    
+    # Check for sudo access
+    if ! sudo -n true 2>/dev/null; then
+        if ! prompt_yn "This installer requires sudo access. Continue?"; then
+            error "Sudo access required for system package installation"
+        fi
+    fi
+    
+    # Check internet connectivity
+    if ! curl -s --connect-timeout 5 https://github.com >/dev/null; then
+        warn "No internet connection detected. Some features may not work."
+        if ! prompt_yn "Continue without internet?"; then
+            exit 1
+        fi
+    fi
+    
+    # Validate selected components
+    for component in "${selected_components[@]}"; do
+        if [[ "$component" != "dependencies" ]]; then
+            check_component_dependencies "$component" || {
+                warn "Component $component has unmet dependencies"
+                if prompt_yn "Install dependencies component first?"; then
+                    selected_components=("dependencies" "${selected_components[@]}")
+                    break
+                fi
+            }
+        fi
+    done
+    
+    success "System validation complete"
+}
+
+# =====================================================
+# Installation Functions
+# =====================================================
+
+install_dependencies() {
+    log "Installing system dependencies..."
+    
+    # Core packages needed by most components
+    local core_packages=()
+    local dev_packages=()
+    local i3_packages=()
+    local font_packages=()
+    
+    case "$OS" in
+        "linux")
+            case "$DISTRO" in
+                "debian")
+                    sudo apt-get update
+                    
+                    # Core system tools
+                    core_packages=("curl" "wget" "git" "zsh" "bash" "build-essential")
+                    
+                    # Development tools
+                    dev_packages=("tmux" "neovim" "python3-pip" "nodejs" "npm" "fd-find" "ripgrep" "bat" "fzf" "htop" "ncdu" "git-delta" "xclip" "xsel")
+                    
+                    # i3 ecosystem
+                    i3_packages=("i3" "i3status" "i3lock" "polybar" "rofi" "picom" "nitrogen" "dunst" "xss-lock" "xautolock" "arandr" "pavucontrol" "brightnessctl")
+                    
+                    # Additional i3 dependencies that might not be in repos
+                    local i3_extra=("i3lock-fancy")
+                    
+                    # Programming fonts
+                    font_packages=("fonts-jetbrains-mono" "fonts-inter" "fonts-font-awesome")
+                    
+                    # Install core packages
+                    sudo apt-get install -y "${core_packages[@]}"
+                    
+                    # Install development packages if selected
+                    if [[ " ${selected_components[*]} " =~ " shell " ]] || [[ " ${selected_components[*]} " =~ " nvim " ]] || [[ " ${selected_components[*]} " =~ " tmux " ]]; then
+                        sudo apt-get install -y "${dev_packages[@]}"
+                    fi
+                    
+                    # Install i3 packages if selected
+                    if [[ " ${selected_components[*]} " =~ " i3wm " ]]; then
+                        sudo apt-get install -y "${i3_packages[@]}" || warn "Some i3 packages failed to install"
+                        
+                        # Try to install i3lock-fancy from external sources
+                        if ! command -v i3lock-fancy >/dev/null 2>&1; then
+                            log "Installing i3lock-fancy from source..."
+                            if command -v snap >/dev/null 2>&1; then
+                                sudo snap install i3lock-fancy || warn "Failed to install i3lock-fancy via snap"
+                            else
+                                warn "i3lock-fancy not available. Please install manually: https://github.com/meskarune/i3lock-fancy"
+                            fi
+                        fi
+                    fi
+                    
+                    # Install fonts if selected
+                    if [[ " ${selected_components[*]} " =~ " fonts " ]]; then
+                        sudo apt-get install -y "${font_packages[@]}" || warn "Some font packages failed to install"
+                    fi
+                    
+                    # Create fd symlink for Debian compatibility
+                    sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true
+                    ;;
+                "arch")
+                    # Core system tools
+                    core_packages=("curl" "wget" "git" "zsh" "bash" "base-devel")
+                    
+                    # Development tools  
+                    dev_packages=("tmux" "neovim" "python-pip" "nodejs" "npm" "fd" "ripgrep" "bat" "fzf" "htop" "ncdu" "git-delta" "xclip" "xsel")
+                    
+                    # i3 ecosystem
+                    i3_packages=("i3-wm" "i3status" "i3lock" "polybar" "rofi" "picom" "nitrogen" "dunst" "xss-lock" "xautolock" "arandr" "pavucontrol" "brightnessctl")
+                    
+                    # Programming fonts
+                    font_packages=("ttf-jetbrains-mono" "inter-font" "ttf-font-awesome")
+                    
+                    # Install packages based on selected components
+                    sudo pacman -Sy --noconfirm "${core_packages[@]}"
+                    
+                    if [[ " ${selected_components[*]} " =~ " shell " ]] || [[ " ${selected_components[*]} " =~ " nvim " ]] || [[ " ${selected_components[*]} " =~ " tmux " ]]; then
+                        sudo pacman -S --noconfirm "${dev_packages[@]}" || warn "Some development packages failed to install"
+                    fi
+                    
+                    if [[ " ${selected_components[*]} " =~ " i3wm " ]]; then
+                        sudo pacman -S --noconfirm "${i3_packages[@]}" || warn "Some i3 packages failed to install"
+                        
+                        # Install i3lock-fancy from AUR if available
+                        if command -v yay >/dev/null 2>&1; then
+                            yay -S --noconfirm i3lock-fancy-git || warn "Failed to install i3lock-fancy from AUR"
+                        elif command -v paru >/dev/null 2>&1; then
+                            paru -S --noconfirm i3lock-fancy-git || warn "Failed to install i3lock-fancy from AUR"
+                        fi
+                    fi
+                    
+                    if [[ " ${selected_components[*]} " =~ " fonts " ]]; then
+                        sudo pacman -S --noconfirm "${font_packages[@]}" || warn "Some font packages failed to install"
+                    fi
+                    ;;
+                "redhat")
+                    # Similar structure for RedHat-based systems
+                    core_packages=("curl" "wget" "git" "zsh" "bash" "gcc" "gcc-c++" "make")
+                    dev_packages=("tmux" "neovim" "python3-pip" "nodejs" "npm" "fd-find" "ripgrep" "bat" "fzf" "htop" "ncdu" "git-delta" "xclip" "xsel")
+                    i3_packages=("i3" "polybar" "rofi" "xclip" "xsel")
+                    
+                    sudo yum install -y "${core_packages[@]}"
+                    
+                    if [[ " ${selected_components[*]} " =~ " shell " ]] || [[ " ${selected_components[*]} " =~ " nvim " ]] || [[ " ${selected_components[*]} " =~ " tmux " ]]; then
+                        sudo yum install -y "${dev_packages[@]}" || warn "Some development packages failed to install"
+                    fi
+                    
+                    if [[ " ${selected_components[*]} " =~ " i3wm " ]]; then
+                        sudo yum install -y "${i3_packages[@]}" || warn "Some i3 packages failed to install"
+                        warn "i3 ecosystem support is limited on RHEL. Consider using Fedora or installing from source."
+                    fi
+                    ;;
+            esac
+            ;;
+        "macos")
+            if ! command -v brew >/dev/null 2>&1; then
+                log "Installing Homebrew..."
+                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            fi
+            
+            # Core packages
+            local packages=("curl" "wget" "git" "zsh")
+            
+            if [[ " ${selected_components[*]} " =~ " shell " ]] || [[ " ${selected_components[*]} " =~ " nvim " ]] || [[ " ${selected_components[*]} " =~ " tmux " ]]; then
+                packages+=("tmux" "neovim" "python3" "node" "npm" "fd" "ripgrep" "bat" "fzf" "htop" "ncdu" "git-delta")
+            fi
+            
+            if [[ " ${selected_components[*]} " =~ " fonts " ]]; then
+                packages+=("font-jetbrains-mono" "font-inter")
+            fi
+            
+            brew install "${packages[@]}" || warn "Some packages failed to install"
+            
+            if [[ " ${selected_components[*]} " =~ " i3wm " ]]; then
+                warn "i3 window manager is not available on macOS. Consider using yabai instead."
+            fi
             ;;
     esac
     
@@ -207,8 +463,9 @@ link_dotfile() {
 }
 
 install_dotfiles() {
-    log "Installing dotfiles..."
+    log "Installing core dotfiles..."
     
+    # Always install core shell and git configs
     # Shell configurations (use modern zsh if available)
     if [[ -f "$DOTFILES_DIR/_zshrc.modern" ]]; then
         link_dotfile "_zshrc.modern" "$HOME/.zshrc"
@@ -223,46 +480,73 @@ install_dotfiles() {
     link_dotfile "_gitconfig" "$HOME/.gitconfig"
     link_dotfile "_gitignore_global" "$HOME/.gitignore_global"
     
-    # Terminal and development
-    link_dotfile "_tmux.conf" "$HOME/.tmux.conf"
+    # Terminal and development basics
     link_dotfile "_pythonrc.py" "$HOME/.pythonrc.py"
     link_dotfile "_Xresources" "$HOME/.Xresources"
     link_dotfile "_dircolors" "$HOME/.dircolors"
-    
-    # Editor configuration
     link_dotfile ".editorconfig" "$HOME/.editorconfig"
     
-    # Starship configuration if it exists
-    if [[ -f "$DOTFILES_DIR/starship.toml" ]]; then
-        mkdir -p "$HOME/.config"
-        link_dotfile "starship.toml" "$HOME/.config/starship.toml"
-    fi
+    success "Core dotfiles installation complete"
+}
+
+install_nvim_config() {
+    log "Installing Neovim configuration..."
     
-    # Neovim configuration
     if [[ -d "$DOTFILES_DIR/config/nvim" ]]; then
         link_dotfile "config/nvim" "$HOME/.config/nvim"
+        success "Neovim configuration installed"
+    else
+        warn "Neovim configuration not found"
     fi
+}
+
+install_i3_config() {
+    log "Installing i3 window manager configuration..."
     
     # i3 window manager
     if [[ -d "$DOTFILES_DIR/config/i3" ]]; then
         link_dotfile "config/i3" "$HOME/.config/i3"
+    else
+        warn "i3 configuration not found"
     fi
     
     # Polybar
     if [[ -d "$DOTFILES_DIR/config/polybar" ]]; then
         link_dotfile "config/polybar" "$HOME/.config/polybar"
+    else
+        warn "Polybar configuration not found"
     fi
     
     # Rofi
     if [[ -d "$DOTFILES_DIR/config/rofi" ]]; then
         link_dotfile "config/rofi" "$HOME/.config/rofi"
+    else
+        warn "Rofi configuration not found"
     fi
     
-    success "Dotfiles installation complete"
+    # Picom compositor config if it exists
+    if [[ -f "$DOTFILES_DIR/config/picom/picom.conf" ]]; then
+        link_dotfile "config/picom/picom.conf" "$HOME/.config/picom/picom.conf"
+    fi
+    
+    success "i3 window manager configuration installed"
+}
+
+install_tmux_config() {
+    log "Installing tmux configuration..."
+    
+    link_dotfile "_tmux.conf" "$HOME/.tmux.conf"
+    success "Tmux configuration installed"
 }
 
 setup_shell() {
     log "Setting up modern shell environment..."
+    
+    # Starship configuration
+    if [[ -f "$DOTFILES_DIR/starship.toml" ]]; then
+        mkdir -p "$HOME/.config"
+        link_dotfile "starship.toml" "$HOME/.config/starship.toml"
+    fi
     
     # Install Zinit plugin manager (critical for modern zsh config)
     local zinit_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
@@ -311,33 +595,6 @@ setup_shell() {
         esac
     fi
     
-    # Install modern CLI tools if not present
-    case "$OS" in
-        "linux")
-            case "$DISTRO" in
-                "debian")
-                    # Install additional modern tools
-                    if ! command -v eza >/dev/null 2>&1; then
-                        log "Installing eza (modern ls replacement)..."
-                        wget -c https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz -O - | tar xz -C /tmp
-                        sudo mv /tmp/eza /usr/local/bin/
-                    fi
-                    ;;
-            esac
-            ;;
-        "macos")
-            # Modern tools via Homebrew
-            local tools=("eza" "zoxide" "atuin" "starship")
-            for tool in "${tools[@]}"; do
-                if ! command -v "$tool" >/dev/null 2>&1; then
-                    brew install "$tool"
-                fi
-            done
-            ;;
-    esac
-    
-    # Modern zsh configuration already linked in install_dotfiles()
-    
     # Install FZF if not present
     if [[ ! -d "$HOME/.fzf" ]]; then
         log "Installing FZF..."
@@ -358,6 +615,36 @@ setup_shell() {
     fi
     
     success "Modern shell environment setup complete"
+}
+
+setup_extras() {
+    log "Installing additional modern CLI tools..."
+    
+    case "$OS" in
+        "linux")
+            case "$DISTRO" in
+                "debian")
+                    # Install additional modern tools
+                    if ! command -v eza >/dev/null 2>&1; then
+                        log "Installing eza (modern ls replacement)..."
+                        wget -c https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz -O - | tar xz -C /tmp
+                        sudo mv /tmp/eza /usr/local/bin/
+                    fi
+                    ;;
+            esac
+            ;;
+        "macos")
+            # Modern tools via Homebrew
+            local tools=("eza")
+            for tool in "${tools[@]}"; do
+                if ! command -v "$tool" >/dev/null 2>&1; then
+                    brew install "$tool"
+                fi
+            done
+            ;;
+    esac
+    
+    success "Additional CLI tools installed"
 }
 
 setup_tmux() {
@@ -493,46 +780,78 @@ main() {
         backup_file "$file"
     done
     
-    # Ask for confirmation
+    # Component selection
     echo
-    info "This installer will:"
-    echo "  • Install system dependencies"
-    echo "  • Create symbolic links for all dotfiles"
-    echo "  • Set up modern zsh with Starship prompt, Zinit and plugins"
-    echo "  • Install modern CLI tools (eza, zoxide, atuin, starship)"
-    echo "  • Configure tmux with plugin manager"
-    echo "  • Install fonts and themes"
+    info "This is a modular installer. You can choose which components to install."
     echo
+    
+    # Let user select components
+    select_components
+    
+    # Store selected components globally
+    declare -g selected_components
+    selected_components=()
+    
+    for component in "dotfiles" "shell" "nvim" "i3wm" "tmux" "fonts" "extras"; do
+        echo -e "${BLUE}$component${NC}: ${COMPONENTS[$component]}"
+        if prompt_yn "Install $component?"; then
+            selected_components+=("$component")
+        fi
+        echo
+    done
+    
+    if [[ ${#selected_components[@]} -eq 0 ]]; then
+        warn "No components selected. Exiting."
+        exit 0
+    fi
+    
+    echo
+    info "Selected components: ${selected_components[*]}"
     info "Existing files have been backed up to: $BACKUP_DIR"
     echo
     
-    if ! prompt_yn "Continue with installation?"; then
+    if ! prompt_yn "Continue with installation of selected components?"; then
         warn "Installation cancelled by user"
         exit 0
     fi
     
-    # Install dependencies
-    if prompt_yn "Install system dependencies?"; then
-        install_dependencies
-    fi
+    # Validate system requirements
+    validate_system_requirements
     
-    # Install dotfiles
-    install_dotfiles
-    
-    # Setup shell
-    if prompt_yn "Set up zsh environment?"; then
-        setup_shell
-    fi
-    
-    # Setup tmux
-    if prompt_yn "Set up tmux environment?"; then
-        setup_tmux
-    fi
-    
-    # Setup fonts
-    if prompt_yn "Install fonts?"; then
-        setup_fonts
-    fi
+    # Install components with their dependencies
+    for component in "${selected_components[@]}"; do
+        echo
+        log "Installing component: $component"
+        
+        # Install component-specific dependencies first
+        install_component_dependencies "$component"
+        
+        # Then install the component itself
+        case "$component" in
+            "dotfiles")
+                install_dotfiles
+                ;;
+            "shell")
+                setup_shell
+                ;;
+            "nvim")
+                install_nvim_config
+                ;;
+            "i3wm")
+                install_i3_config
+                ;;
+            "tmux")
+                install_tmux_config
+                setup_tmux
+                ;;
+            "fonts")
+                setup_fonts
+                ;;
+            "extras")
+                setup_extras
+                ;;
+        esac
+    done
     
     # Post-installation setup
     post_install_setup
