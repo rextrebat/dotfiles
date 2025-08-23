@@ -214,6 +214,10 @@ require("lazy").setup({
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
     },
+    config = function()
+      -- LSP configuration is done later in the file
+      -- This ensures proper loading order
+    end,
   },
   
   -- Autocompletion with LSP support
@@ -462,22 +466,34 @@ local lsp_servers = {
   marksman = {}, -- Markdown
 }
 
--- Enable LSP servers using lspconfig for compatibility
-local lspconfig_ok, lspconfig = pcall(require, 'lspconfig')
-if lspconfig_ok then
-  for server, config in pairs(lsp_servers) do
-    lspconfig[server].setup(config)
-  end
-else
-  -- Fallback for Neovim 0.11+ native LSP (if vim.lsp.enable exists)
-  if vim.lsp.enable then
-    for server, config in pairs(lsp_servers) do
-      vim.lsp.enable(server, config)
-    end
-  else
-    vim.notify("LSP configuration skipped: neither lspconfig nor vim.lsp.enable available", vim.log.levels.WARN)
-  end
-end
+-- Setup LSP after all plugins are loaded
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    -- Small delay to ensure all plugins are loaded
+    vim.defer_fn(function()
+      -- Enable LSP servers using lspconfig for compatibility
+      local lspconfig_ok, lspconfig = pcall(require, 'lspconfig')
+      if lspconfig_ok then
+        for server, config in pairs(lsp_servers) do
+          if lspconfig[server] then
+            lspconfig[server].setup(config)
+          else
+            vim.notify("LSP server '" .. server .. "' not available in lspconfig", vim.log.levels.WARN)
+          end
+        end
+      else
+        -- Fallback for Neovim 0.11+ native LSP (if vim.lsp.enable exists)
+        if vim.lsp.enable then
+          for server, config in pairs(lsp_servers) do
+            vim.lsp.enable(server, config)
+          end
+        else
+          vim.notify("LSP configuration skipped: neither lspconfig nor vim.lsp.enable available", vim.log.levels.WARN)
+        end
+      end
+    end, 100)
+  end,
+})
 
 -- LSP keymaps (set when LSP attaches to buffer)
 vim.api.nvim_create_autocmd('LspAttach', {
