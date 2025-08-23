@@ -170,14 +170,27 @@ install_component_dependencies() {
         "linux")
             case "$DISTRO" in
                 "debian")
-                    sudo apt-get update >/dev/null 2>&1
-                    sudo apt-get install -y "${packages[@]}" 2>/dev/null || {
-                        warn "Some packages failed to install for $component"
+                    # Update package cache (allow failure)
+                    log "Updating package cache..."
+                    if ! sudo apt-get update >/dev/null 2>&1; then
+                        warn "Package cache update failed, but continuing..."
+                    fi
+                    
+                    # Install packages with better error handling
+                    log "Installing packages: ${packages[*]}"
+                    if ! sudo apt-get install -y "${packages[@]}" 2>/dev/null; then
+                        warn "Bulk package installation failed, trying individually..."
                         # Try individual packages
                         for pkg in "${packages[@]}"; do
-                            sudo apt-get install -y "$pkg" 2>/dev/null || warn "Failed to install: $pkg"
+                            if ! sudo apt-get install -y "$pkg" 2>/dev/null; then
+                                warn "Failed to install: $pkg (may already be installed or unavailable)"
+                            else
+                                success "Installed: $pkg"
+                            fi
                         done
-                    }
+                    else
+                        success "All packages installed successfully"
+                    fi
                     
                     # Special handling for i3 ecosystem
                     if [[ "$component" == "i3wm" ]]; then
@@ -245,9 +258,19 @@ validate_system_requirements() {
     
     # Check for sudo access
     if ! sudo -n true 2>/dev/null; then
+        echo
+        info "This installer needs sudo access to install system packages."
+        info "You may be prompted for your password during package installation."
+        echo
         if ! prompt_yn "This installer requires sudo access. Continue?"; then
             error "Sudo access required for system package installation"
         fi
+        
+        # Test sudo access
+        if ! sudo true; then
+            error "Failed to obtain sudo access"
+        fi
+        success "Sudo access confirmed"
     fi
     
     # Check internet connectivity
