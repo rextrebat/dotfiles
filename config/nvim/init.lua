@@ -207,18 +207,8 @@ require("lazy").setup({
   -- LSP Configuration
   -- =====================================================
   
-  -- LSP Configuration
-  {
-    "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-    },
-    config = function()
-      -- LSP configuration is done later in the file
-      -- This ensures proper loading order
-    end,
-  },
+  -- LSP Configuration (using minimal setup)
+  -- We'll configure LSP manually without lspconfig for better compatibility
   
   -- Autocompletion with LSP support
   {
@@ -466,32 +456,45 @@ local lsp_servers = {
   marksman = {}, -- Markdown
 }
 
--- Setup LSP after all plugins are loaded
+-- Simple LSP setup without lspconfig dependency
+-- This provides a more reliable configuration that works across different setups
+local function setup_basic_lsp()
+  -- Only setup commonly available LSP servers
+  local basic_servers = {
+    lua_ls = {
+      cmd = { "lua-language-server" },
+      settings = {
+        Lua = {
+          runtime = { version = 'LuaJIT' },
+          diagnostics = { globals = { 'vim' } },
+          workspace = {
+            library = vim.api.nvim_get_runtime_file("", true),
+            checkThirdParty = false,
+          },
+          telemetry = { enable = false },
+        },
+      },
+    },
+  }
+  
+  -- Try to start basic LSP servers if available
+  for server_name, config in pairs(basic_servers) do
+    -- Check if the LSP server binary exists
+    if vim.fn.executable(config.cmd[1]) == 1 then
+      vim.lsp.start({
+        name = server_name,
+        cmd = config.cmd,
+        root_dir = vim.fs.dirname(vim.fs.find({'.git', 'init.lua'}, { upward = true })[1]),
+        settings = config.settings,
+      })
+    end
+  end
+end
+
+-- Setup LSP after plugins are loaded
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
-    -- Small delay to ensure all plugins are loaded
-    vim.defer_fn(function()
-      -- Enable LSP servers using lspconfig for compatibility
-      local lspconfig_ok, lspconfig = pcall(require, 'lspconfig')
-      if lspconfig_ok then
-        for server, config in pairs(lsp_servers) do
-          if lspconfig[server] then
-            lspconfig[server].setup(config)
-          else
-            vim.notify("LSP server '" .. server .. "' not available in lspconfig", vim.log.levels.WARN)
-          end
-        end
-      else
-        -- Fallback for Neovim 0.11+ native LSP (if vim.lsp.enable exists)
-        if vim.lsp.enable then
-          for server, config in pairs(lsp_servers) do
-            vim.lsp.enable(server, config)
-          end
-        else
-          vim.notify("LSP configuration skipped: neither lspconfig nor vim.lsp.enable available", vim.log.levels.WARN)
-        end
-      end
-    end, 100)
+    vim.defer_fn(setup_basic_lsp, 200)
   end,
 })
 
