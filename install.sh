@@ -64,7 +64,8 @@ success() {
 prompt_yn() {
     local prompt="$1"
     while true; do
-        read -p "$(echo -e "${YELLOW}$prompt (y/n): ${NC}")" yn
+        echo -ne "${YELLOW}$prompt (y/n): ${NC}"
+        read yn
         case $yn in
             [Yy]* ) return 0;;
             [Nn]* ) return 1;;
@@ -149,28 +150,6 @@ declare -A COMPONENT_PACKAGES=(
     ["extras"]="curl wget"
 )
 
-select_components() {
-    log "Available installation components:"
-    echo
-    
-    local selected_components=()
-    
-    for component in "dotfiles" "shell" "nvim" "i3wm" "tmux" "fonts" "extras"; do
-        echo -e "${BLUE}$component${NC}: ${COMPONENTS[$component]}"
-        if prompt_yn "Install $component?"; then
-            selected_components+=("$component")
-        fi
-        echo
-    done
-    
-    if [[ ${#selected_components[@]} -eq 0 ]]; then
-        warn "No components selected. Exiting."
-        exit 0
-    fi
-    
-    log "Selected components: ${selected_components[*]}"
-    return 0
-}
 
 # =====================================================
 # Dependency Validation
@@ -785,13 +764,11 @@ main() {
     info "This is a modular installer. You can choose which components to install."
     echo
     
-    # Let user select components
-    select_components
-    
     # Store selected components globally
     declare -g selected_components
     selected_components=()
     
+    # Let user select components
     for component in "dotfiles" "shell" "nvim" "i3wm" "tmux" "fonts" "extras"; do
         echo -e "${BLUE}$component${NC}: ${COMPONENTS[$component]}"
         if prompt_yn "Install $component?"; then
