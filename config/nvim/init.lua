@@ -204,11 +204,17 @@ require("lazy").setup({
   },
   
   -- =====================================================
-  -- LSP Configuration (Native 0.11+ Support)
+  -- LSP Configuration
   -- =====================================================
   
-  -- Native LSP configuration for Neovim 0.11+
-  -- No plugins needed for basic LSP functionality
+  -- LSP Configuration
+  {
+    "neovim/nvim-lspconfig",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+    },
+  },
   
   -- Autocompletion with LSP support
   {
@@ -456,9 +462,21 @@ local lsp_servers = {
   marksman = {}, -- Markdown
 }
 
--- Enable LSP servers
-for server, config in pairs(lsp_servers) do
-  vim.lsp.enable(server, config)
+-- Enable LSP servers using lspconfig for compatibility
+local lspconfig_ok, lspconfig = pcall(require, 'lspconfig')
+if lspconfig_ok then
+  for server, config in pairs(lsp_servers) do
+    lspconfig[server].setup(config)
+  end
+else
+  -- Fallback for Neovim 0.11+ native LSP (if vim.lsp.enable exists)
+  if vim.lsp.enable then
+    for server, config in pairs(lsp_servers) do
+      vim.lsp.enable(server, config)
+    end
+  else
+    vim.notify("LSP configuration skipped: neither lspconfig nor vim.lsp.enable available", vim.log.levels.WARN)
+  end
 end
 
 -- LSP keymaps (set when LSP attaches to buffer)
