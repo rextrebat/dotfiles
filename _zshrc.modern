@@ -166,8 +166,11 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza -1 --color=always $real
 [ -f ~/.zshenv ] && source ~/.zshenv
 
 # Atuin shell history (keep this - it's modern!)
-if command -v atuin > /dev/null 2>&1; then
+# First ensure atuin is in PATH, then initialize
+if [[ -f "$HOME/.atuin/bin/env" ]]; then
     . "$HOME/.atuin/bin/env"
+fi
+if command -v atuin > /dev/null 2>&1; then
     eval "$(atuin init zsh)"
 fi
 

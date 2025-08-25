@@ -341,7 +341,13 @@ fi
 
 # Clean up color variables
 unset RED GREEN YELLOW BLUE PURPLE CYAN WHITE BOLD RESET
-. "$HOME/.atuin/bin/env"
+# Atuin shell history
+# First ensure atuin is in PATH, then initialize
+if [[ -f "$HOME/.atuin/bin/env" ]]; then
+    . "$HOME/.atuin/bin/env"
+fi
 
 [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
-eval "$(atuin init bash)"
+if command -v atuin > /dev/null 2>&1; then
+    eval "$(atuin init bash)"
+fi

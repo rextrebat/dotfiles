@@ -590,6 +590,14 @@ setup_shell() {
         case "$OS" in
             "linux")
                 curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
+                
+                # Ensure atuin is available immediately after installation
+                if [[ -f "$HOME/.atuin/bin/env" ]]; then
+                    source "$HOME/.atuin/bin/env"
+                    success "Atuin installed and added to PATH"
+                else
+                    warn "Atuin installed but env file not found"
+                fi
                 ;;
             "macos")
                 brew install atuin
