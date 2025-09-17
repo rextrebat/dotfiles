@@ -247,8 +247,8 @@ bindsym $mod+r mode "resize"
 # System Controls
 # =====================================================
 
-# Screen lock
-bindsym $mod+Ctrl+l exec --no-startup-id i3lock-fancy
+# Screen lock (using GNOME lock screen for user switching)
+bindsym $mod+Ctrl+l exec --no-startup-id loginctl lock-session
 
 # Power management menu
 bindsym $mod+Shift+p exec --no-startup-id ~/.config/polybar/scripts/powermenu.sh
@@ -372,7 +372,7 @@ for_window [title="^Steam Keyboard$"] floating enable
 
 # Essential services
 exec --no-startup-id dex --autostart --environment i3
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock-fancy --nofork
+exec --no-startup-id xss-lock --transfer-sleep-lock -- loginctl lock-session
 exec --no-startup-id nm-applet
 exec --no-startup-id blueman-applet
 exec --no-startup-id xfce4-power-manager
@@ -391,8 +391,8 @@ exec_always --no-startup-id ~/.config/polybar/launch.sh
 # Polkit agent
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
-# Auto-lock after 10 minutes
-exec --no-startup-id xautolock -time 10 -locker 'i3lock-fancy' -detectsleep
+# Auto-lock after 10 minutes (using system lock screen)
+exec --no-startup-id xautolock -time 10 -locker 'loginctl lock-session' -detectsleep
 
 # =====================================================
 # Focus Configuration
