@@ -248,7 +248,7 @@ bindsym $mod+r mode "resize"
 # =====================================================
 
 # Screen lock (using GNOME lock screen for user switching)
-bindsym $mod+Ctrl+l exec --no-startup-id loginctl lock-session
+bindsym $mod+Ctrl+l exec --no-startup-id gnome-screensaver-command --lock
 
 # Power management menu
 bindsym $mod+Shift+p exec --no-startup-id ~/.config/polybar/scripts/powermenu.sh
@@ -372,7 +372,7 @@ for_window [title="^Steam Keyboard$"] floating enable
 
 # Essential services
 exec --no-startup-id dex --autostart --environment i3
-exec --no-startup-id xss-lock --transfer-sleep-lock -- loginctl lock-session
+exec --no-startup-id xss-lock --transfer-sleep-lock -- sh -c "gnome-screensaver-command --lock || loginctl lock-session"
 exec --no-startup-id nm-applet
 exec --no-startup-id blueman-applet
 exec --no-startup-id xfce4-power-manager
@@ -392,7 +392,7 @@ exec_always --no-startup-id ~/.config/polybar/launch.sh
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
 # Auto-lock after 10 minutes (using system lock screen)
-exec --no-startup-id xautolock -time 10 -locker 'loginctl lock-session' -detectsleep
+exec --no-startup-id xautolock -time 10 -locker 'sh -c "gnome-screensaver-command --lock || loginctl lock-session"' -detectsleep
 
 # =====================================================
 # Focus Configuration
