@@ -207,9 +207,50 @@ require("lazy").setup({
   -- LSP Configuration
   -- =====================================================
   
-  -- LSP Configuration (using minimal setup)
-  -- We'll configure LSP manually without lspconfig for better compatibility
-  
+  -- LSP Configuration
+  {
+    "neovim/nvim-lspconfig",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+    },
+    config = function()
+      local lspconfig = require("lspconfig")
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+      local servers = {
+        lua_ls = {
+          settings = {
+            Lua = {
+              runtime = { version = 'LuaJIT' },
+              diagnostics = { globals = { 'vim' } },
+              workspace = {
+                library = vim.api.nvim_get_runtime_file("", true),
+                checkThirdParty = false,
+              },
+              telemetry = { enable = false },
+            },
+          },
+        },
+        pyright = {},
+        ts_ls = {},
+        html = {},
+        cssls = {},
+        jsonls = {},
+        yamlls = {},
+        bashls = {},
+        gopls = {},
+        rust_analyzer = {},
+        marksman = {},
+      }
+
+      for server, config in pairs(servers) do
+        config.capabilities = capabilities
+        lspconfig[server].setup(config)
+      end
+    end,
+  },
+
   -- Autocompletion with LSP support
   {
     "hrsh7th/nvim-cmp",
@@ -426,77 +467,8 @@ require("lazy").setup({
 })
 
 -- =====================================================
--- Native LSP Setup (Neovim 0.11+)
+-- LSP Keymaps & Diagnostics
 -- =====================================================
-
--- LSP servers configuration
-local lsp_servers = {
-  lua_ls = {
-    settings = {
-      Lua = {
-        runtime = { version = 'LuaJIT' },
-        diagnostics = { globals = { 'vim' } },
-        workspace = {
-          library = vim.api.nvim_get_runtime_file("", true),
-          checkThirdParty = false,
-        },
-        telemetry = { enable = false },
-      },
-    },
-  },
-  pyright = {},
-  ts_ls = {},
-  html = {},
-  cssls = {},
-  jsonls = {},
-  yamlls = {},
-  bashls = {},
-  gopls = {},
-  rust_analyzer = {},
-  marksman = {}, -- Markdown
-}
-
--- Simple LSP setup without lspconfig dependency
--- This provides a more reliable configuration that works across different setups
-local function setup_basic_lsp()
-  -- Only setup commonly available LSP servers
-  local basic_servers = {
-    lua_ls = {
-      cmd = { "lua-language-server" },
-      settings = {
-        Lua = {
-          runtime = { version = 'LuaJIT' },
-          diagnostics = { globals = { 'vim' } },
-          workspace = {
-            library = vim.api.nvim_get_runtime_file("", true),
-            checkThirdParty = false,
-          },
-          telemetry = { enable = false },
-        },
-      },
-    },
-  }
-  
-  -- Try to start basic LSP servers if available
-  for server_name, config in pairs(basic_servers) do
-    -- Check if the LSP server binary exists
-    if vim.fn.executable(config.cmd[1]) == 1 then
-      vim.lsp.start({
-        name = server_name,
-        cmd = config.cmd,
-        root_dir = vim.fs.dirname(vim.fs.find({'.git', 'init.lua'}, { upward = true })[1]),
-        settings = config.settings,
-      })
-    end
-  end
-end
-
--- Setup LSP after plugins are loaded
-vim.api.nvim_create_autocmd("VimEnter", {
-  callback = function()
-    vim.defer_fn(setup_basic_lsp, 200)
-  end,
-})
 
 -- LSP keymaps (set when LSP attaches to buffer)
 vim.api.nvim_create_autocmd('LspAttach', {
