@@ -173,6 +173,7 @@ if command -v atuin > /dev/null 2>&1; then
 fi
 
 # NVM (Node Version Manager)
+unset NPM_CONFIG_PREFIX
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
@@ -193,7 +194,8 @@ if command -v zoxide > /dev/null 2>&1; then
 fi
 
 # Load local customizations if they exist
-[ -f ~/.zshrc.local ] && source ~/.zshrc.localexport PATH="$HOME/.npm-global/bin:$PATH"
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+export PATH="$HOME/.npm-global/bin:$PATH"
 
 # OpenClaw Completion
-source "/home/kdasgupta/.openclaw/completions/openclaw.zsh"
+[ -f "/home/kdasgupta/.openclaw/completions/openclaw.zsh" ] && source "/home/kdasgupta/.openclaw/completions/openclaw.zsh"
