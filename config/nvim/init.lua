@@ -242,7 +242,6 @@ require("lazy").setup({
         bashls = {},
         gopls = {},
         rust_analyzer = {},
-        marksman = {},
       }
 
       for server, config in pairs(servers) do
