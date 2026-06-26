@@ -68,7 +68,6 @@ export PIP_REQUIRE_VIRTUALENV=false
 export PIPENV_VENV_IN_PROJECT=1
 
 # Node.js
-# export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export NODE_REPL_HISTORY="$HOME/.node_repl_history"
 
 # Less pager
@@ -164,36 +163,12 @@ if command -v ccache >/dev/null 2>&1; then
 fi
 
 # =====================================================
-# Modern Tool Replacements
+# Shell Aliases
 # =====================================================
 
-# Check for and use modern alternatives
-if command -v exa >/dev/null 2>&1; then
-    alias ls='exa --color=auto --group-directories-first'
-    alias ll='exa -la --color=auto --group-directories-first'
-    alias la='exa -a --color=auto --group-directories-first'
-elif command -v lsd >/dev/null 2>&1; then
-    alias ls='lsd --color=auto --group-dirs first'
-    alias ll='lsd -la --color=auto --group-dirs first'
-    alias la='lsd -a --color=auto --group-dirs first'
-else
-    alias ls='ls --color=auto'
-    alias ll='ls -la --color=auto'
-    alias la='ls -a --color=auto'
-fi
-
-if command -v bat >/dev/null 2>&1; then
-    alias cat='bat --style=plain'
-    export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-fi
-
-if command -v fd >/dev/null 2>&1; then
-    alias find='fd'
-fi
-
-if command -v rg >/dev/null 2>&1; then
-    alias grep='rg'
-fi
+alias ls='ls --color=auto'
+alias ll='ls -la --color=auto'
+alias la='ls -a --color=auto'
 
 if command -v delta >/dev/null 2>&1; then
     export GIT_PAGER="delta"
