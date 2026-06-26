@@ -144,7 +144,7 @@ declare -A COMPONENT_PACKAGES=(
     ["dotfiles"]="git zsh bash"
     ["shell"]="zsh curl git"
     ["nvim"]="neovim curl git"
-    ["i3wm"]="i3 polybar rofi i3lock picom xss-lock xautolock nitrogen dunst arandr pavucontrol brightnessctl"
+    ["i3wm"]="i3 polybar rofi i3lock picom xss-lock xautolock nitrogen dunst arandr pavucontrol brightnessctl xbindkeys"
     ["tmux"]="tmux git"
     ["fonts"]="curl"
     ["extras"]="curl wget"
@@ -323,7 +323,7 @@ install_dependencies() {
                     dev_packages=("tmux" "neovim" "python3-pip" "nodejs" "npm" "fd-find" "ripgrep" "bat" "fzf" "htop" "ncdu" "git-delta" "xclip" "xsel")
                     
                     # i3 ecosystem
-                    i3_packages=("i3" "i3status" "i3lock" "polybar" "rofi" "picom" "nitrogen" "dunst" "xss-lock" "xautolock" "arandr" "pavucontrol" "brightnessctl")
+                    i3_packages=("i3" "i3status" "i3lock" "polybar" "rofi" "picom" "nitrogen" "dunst" "xss-lock" "xautolock" "arandr" "pavucontrol" "brightnessctl" "xbindkeys")
                     
                     # Additional i3 dependencies that might not be in repos
                     local i3_extra=("i3lock-fancy")
@@ -370,7 +370,7 @@ install_dependencies() {
                     dev_packages=("tmux" "neovim" "python-pip" "nodejs" "npm" "fd" "ripgrep" "bat" "fzf" "htop" "ncdu" "git-delta" "xclip" "xsel")
                     
                     # i3 ecosystem
-                    i3_packages=("i3-wm" "i3status" "i3lock" "polybar" "rofi" "picom" "nitrogen" "dunst" "xss-lock" "xautolock" "arandr" "pavucontrol" "brightnessctl")
+                    i3_packages=("i3-wm" "i3status" "i3lock" "polybar" "rofi" "picom" "nitrogen" "dunst" "xss-lock" "xautolock" "arandr" "pavucontrol" "brightnessctl" "xbindkeys")
                     
                     # Programming fonts
                     font_packages=("ttf-jetbrains-mono" "inter-font" "ttf-font-awesome")
@@ -487,7 +487,8 @@ install_dotfiles() {
     link_dotfile "_Xresources" "$HOME/.Xresources"
     link_dotfile "_dircolors" "$HOME/.dircolors"
     link_dotfile ".editorconfig" "$HOME/.editorconfig"
-    
+    link_dotfile "_xbindkeysrc" "$HOME/.xbindkeysrc"
+
     success "Core dotfiles installation complete"
 }
 
@@ -782,7 +783,7 @@ main() {
         ".zshrc" ".bashrc" ".profile" ".inputrc"
         ".gitconfig" ".gitignore_global"
         ".tmux.conf" ".pythonrc.py" ".Xresources" ".dircolors"
-        ".editorconfig"
+        ".editorconfig" ".xbindkeysrc"
         ".config/nvim" ".config/i3" ".config/polybar" ".config/rofi"
     )
     

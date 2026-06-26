@@ -75,4 +75,11 @@ if command -v xset >/dev/null 2>&1; then
     echo "Set keyboard repeat rate"
 fi
 
+# Start xbindkeys for function key bindings
+if command -v xbindkeys >/dev/null 2>&1; then
+    pkill -x xbindkeys 2>/dev/null || true
+    xbindkeys &
+    echo "Started xbindkeys"
+fi
+
 echo "i3 startup script completed"

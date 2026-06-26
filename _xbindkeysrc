@@ -1,0 +1,42 @@
+# xbindkeys configuration
+# Run `xbindkeys -p` to reload after changes
+
+# App launchers
+"rofi -show drun -theme ~/.config/rofi/nord.rasi"
+  F1
+
+"google-chrome"
+  F2
+
+"thunar"
+  F3
+
+"kitty"
+  F4
+
+"flameshot gui"
+  F5
+
+# Media controls
+"playerctl previous"
+  F6
+
+"playerctl play-pause"
+  F7
+
+"playerctl next"
+  F8
+
+# Volume controls
+"pactl set-sink-mute @DEFAULT_SINK@ toggle"
+  F9
+
+"pactl set-sink-volume @DEFAULT_SINK@ -10%"
+  F10
+
+"pactl set-sink-volume @DEFAULT_SINK@ +10%"
+  F11
+
+# Lock screen
+"i3lock -c 000000"
+  F12
